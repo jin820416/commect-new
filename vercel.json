@@ -1,7 +1,6 @@
 {
-  "redirects": [
-    { "source": "/", "destination": "/dongilcs.imweb.me/", "permanent": false }
-  ],
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
