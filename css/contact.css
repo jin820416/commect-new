@@ -569,14 +569,8 @@
 				#s20251124cb7027ae1ac33.extend .inline-inside {
 					max-width: 100% !important;
 				}
-				/* White bg only when sticky (scroll-to-fixed-fixed); overlay mode stays transparent */
-				.scroll-to-fixed-fixed#s20251124cb7027ae1ac33 .inline_widget.image .text,
-				.scroll-to-fixed-fixed#s20251124cb7027ae1ac33 .inline_widget.logo a,
-				.scroll-to-fixed-fixed#s20251124cb7027ae1ac33 .inline_widget.icon,
-				.scroll-to-fixed-fixed#s20251124cb7027ae1ac33 .inline_widget.login_btn a,
-				.scroll-to-fixed-fixed#s20251124cb7027ae1ac33 .viewport-nav > li > a,
-				.scroll-to-fixed-fixed#s20251124cb7027ae1ac33 .inline-col .inline_global_dropdown a,
-				.new_header_overlay #s20251124cb7027ae1ac33.scroll-to-fixed-fixed .section_bg_color {
+				/* Contact page: always show solid white header (top and scrolled) */
+				#s20251124cb7027ae1ac33 .section_bg_color {
 					background-color: #fff !important;
 				}
 				#s20251124cb7027ae1ac33 {
@@ -905,14 +899,8 @@
 				#s202511247cb24f58a51ef.extend .inline-inside {
 					max-width: 100% !important;
 				}
-				#s202511247cb24f58a51ef .inline_widget.image .text,
-				#s202511247cb24f58a51ef .inline_widget.logo a,
-				#s202511247cb24f58a51ef .inline_widget.icon,
-				#s202511247cb24f58a51ef .inline_widget.login_btn a,
-				#s202511247cb24f58a51ef .viewport-nav > li > a,
-				#s202511247cb24f58a51ef .inline-col .inline_global_dropdown a,
-
-				.new_header_overlay_mobile #s202511247cb24f58a51ef.scroll-to-fixed-fixed .section_bg_color {
+				/* Contact page mobile: always show solid white header */
+				#s202511247cb24f58a51ef .section_bg_color {
 					background-color: #ffffff !important;
 				}
 				#s202511247cb24f58a51ef {
@@ -964,6 +952,24 @@
 		.fixed-menu-on.new_fixed_header_disable .scroll_position {
 			top: 0 !important;
 		}
+	}
+
+	/* ===== Contact page: fixed solid header ===== */
+
+	/* Issue 1 (desktop): always show the white fixed header, hide transparent overlay header */
+	@media (min-width: 992px) {
+		#doz_body #doz_header .new_fixed_header {
+			top: 0 !important;
+			opacity: 1 !important;
+		}
+		#doz_body #doz_header .new_org_header #inline_header_normal {
+			display: none !important;
+		}
+	}
+
+	/* Issue 2 (mobile): hamburger icon always dark */
+	#w2025112492c3d48c26ab1 .icon_type_menu {
+		color: #212121 !important;
 	}
 	
 			.shop_view .s202512050d567f1253031.xzoom-preview {
