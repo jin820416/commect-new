@@ -1690,6 +1690,48 @@
 	<script src="js/alarm_menu1712.js"></script>
 	<script src="js/common.js"></script>
 	<script src="js/contact.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script>
+		(function () {
+			const _sb = supabase.createClient(
+				'https://ebryydminuwimkffautk.supabase.co',
+				'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVicnl5ZG1pbnV3aW1rZmZhdXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzNjM0NDcsImV4cCI6MjA3MTkzOTQ0N30.CZxVfX5WtxP5UnJuHTMfcWW9FgGcEitch-QZl5gGyOw'
+			);
+
+			const form = document.getElementById('addFormw20251208250019fcf47d3');
+			const btnSubmit = document.getElementById('btn_inquiry_submit');
+			const modalOk = document.getElementById('input_form_complete_modal_w20251208250019fcf47d3');
+			const modalErr = document.getElementById('input_form_error_modal_w20251208250019fcf47d3');
+
+			form.addEventListener('submit', async function (e) {
+				e.preventDefault();
+
+				btnSubmit.disabled = true;
+				btnSubmit.textContent = '전송 중...';
+
+				const payload = {
+					name: document.getElementById('input_txt_fc86c77c018c9').value.trim(),
+					company: document.getElementById('input_txt_521q07v51u').value.trim(),
+					phone: document.querySelector('[name="phonenumber1_d056f1edc2b4e"]').value.trim(),
+					email: document.getElementById('input_txt_02K1284Jw5').value.trim(),
+					message: document.getElementById('input_text_area_c7k3A0XO75').value.trim(),
+				};
+
+				const { error } = await _sb.from('inquiries_web').insert([payload]);
+
+				btnSubmit.disabled = false;
+				btnSubmit.textContent = '견적 문의하기';
+
+				if (error) {
+					modalErr.querySelector('p').textContent = '오류가 발생했습니다. 다시 시도해 주세요.';
+					modalErr.style.display = 'block';
+				} else {
+					form.reset();
+					modalOk.style.display = 'block';
+				}
+			});
+		})();
+	</script>
 </body>
 
 </html>
