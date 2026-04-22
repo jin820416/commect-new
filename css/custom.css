@@ -6195,6 +6195,15 @@ html>body .mobile_nav_wrap {
     color: #ffffff !important;
 }
 
+/* Mobile header background: keep transparent until new_fixed_header_active (same moment as icons turn dark).
+ * Without this, .section_bg_color turns white on any scroll via scroll-to-fixed-fixed,
+ * while the icons stay white until new_fixed_header_active — causing white-on-white. */
+@media (max-width: 991px) {
+    body.new_header_overlay_mobile:not(.new_fixed_header_active) #inline_header_mobile .section_bg_color {
+        background-color: transparent !important;
+    }
+}
+
 /* Mobile header MENU button: white at scroll-top (overlay over hero), dark after scroll */
 @media (max-width: 991px) {
 
