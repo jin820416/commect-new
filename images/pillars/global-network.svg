@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Global Network">
+  <g fill="none" stroke="#072340" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m15 19-6-7m36 7 10-7m-10 33 10 8"/>
+    <circle cx="30" cy="32" r="20"/>
+    <ellipse cx="30" cy="32" rx="8" ry="20"/>
+    <path d="M10 32h40"/>
+  </g>
+  <g fill="#072340"><circle cx="7" cy="10" r="3"/><circle cx="57" cy="10" r="3"/><circle cx="57" cy="55" r="3"/></g>
+</svg>

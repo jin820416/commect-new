@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Market Understanding">
+  <g fill="none" stroke="#072340" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 50H14a3 3 0 0 1-3-3V11a3 3 0 0 1 3-3h23a3 3 0 0 1 3 3v15M19 20h13M19 28h9"/>
+    <circle cx="42" cy="41" r="11"/>
+    <path d="m50 49 9 9" stroke-width="3"/>
+  </g>
+</svg>

@@ -1,0 +1,278 @@
+[
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 72
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/",
+    "width": 360
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 72
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/about",
+    "width": 360
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 72
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/en",
+    "width": 360
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 72
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 72
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/en/about",
+    "width": 360
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 104
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/",
+    "width": 768
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 104
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/about",
+    "width": 768
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 104
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/en",
+    "width": 768
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 104
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 104
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/en/about",
+    "width": 768
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 120
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/",
+    "width": 1440
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 120
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/about",
+    "width": 1440
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 120
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/en",
+    "width": 1440
+  },
+  {
+    "images": [
+      {
+        "loaded": true,
+        "src": "/images/pillars/global-network.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/market-understanding.svg",
+        "width": 120
+      },
+      {
+        "loaded": true,
+        "src": "/images/pillars/reliable-communication.svg",
+        "width": 120
+      }
+    ],
+    "internal": [],
+    "overflow": false,
+    "path": "/en/about",
+    "width": 1440
+  }
+]

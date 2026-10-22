@@ -1,0 +1,80 @@
+{
+  "metrics": {
+    "body": {
+      "lineHeight": "27.2px",
+      "size": "16px"
+    },
+    "hero": {
+      "size": "64px",
+      "weight": "700"
+    },
+    "nav": {
+      "size": "17px",
+      "weight": "600"
+    },
+    "pillars": {
+      "background": "rgba(0, 0, 0, 0)",
+      "imageSize": 72
+    },
+    "section": {
+      "size": "36px",
+      "weight": "700"
+    },
+    "width": 1440
+  },
+  "motionStart": [
+    {
+      "opacity": "0.758377",
+      "state": "running",
+      "text": "Global Connections."
+    },
+    {
+      "opacity": "0.489329",
+      "state": "running",
+      "text": "Reliable Partnerships."
+    },
+    {
+      "opacity": "0.0408048",
+      "state": "running",
+      "text": "글로벌 커피 시장과 고객의 비즈니스를 연결합니다."
+    },
+    {
+      "opacity": "0",
+      "state": "running",
+      "text": "글로벌 네트워크와 시장에 대한 이해를 바탕으로, 고객의 상황에 "
+    },
+    {
+      "opacity": "0",
+      "state": "running",
+      "text": "비즈니스 문의"
+    }
+  ],
+  "motionEnd": [
+    {
+      "opacity": "1",
+      "state": "complete",
+      "text": "Global Connections."
+    },
+    {
+      "opacity": "1",
+      "state": "complete",
+      "text": "Reliable Partnerships."
+    },
+    {
+      "opacity": "1",
+      "state": "complete",
+      "text": "글로벌 커피 시장과 고객의 비즈니스를 연결합니다."
+    },
+    {
+      "opacity": "1",
+      "state": "complete",
+      "text": "글로벌 네트워크와 시장에 대한 이해를 바탕으로, 고객의 상황에 "
+    },
+    {
+      "opacity": "1",
+      "state": "complete",
+      "text": "비즈니스 문의"
+    }
+  ],
+  "consoleErrors": []
+}

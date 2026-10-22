@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="460" viewBox="0 0 1320 460">
+    <rect width="1320" height="460" fill="white"/>
+    <text x="40" y="38" font-family="Arial, sans-serif" font-size="13" font-weight="600" letter-spacing="2.1" fill="#146b91">COMMECT  /  PILLAR ILLUSTRATIONS</text>
+    <rect x="32" y="72" width="1256" height="340" rx="18" fill="#eaf3f8"/>
+    <path d="M451 122v240M869 122v240" fill="none" stroke="#d8e5ee" stroke-width="1"/>
+    <g transform="translate(182,116)">
+    <circle cx="60" cy="61" r="43" fill="#d2e7f2" opacity=".65"/>
+    <g fill="none" stroke="#146b91" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 27 31 39M85 38l13-13M84 82l13 13"/>
+      <circle cx="16" cy="25" r="6" fill="white"/>
+      <circle cx="100" cy="23" r="6" fill="white"/>
+      <circle cx="99" cy="97" r="6" fill="white"/>
+    </g>
+    <g fill="none" stroke="#072340" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="58" cy="60" r="33" fill="#f5f8fa"/>
+      <ellipse cx="58" cy="60" rx="14" ry="33"/>
+      <path d="M25 60h66M29 44c17-9 41-9 58 0M29 76c17 9 41 9 58 0"/>
+    </g></g><text x="242" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="600" fill="#072340">Global Network</text><text x="242" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#4b5563">Connected across markets</text><g transform="translate(600,116)">
+    <circle cx="60" cy="61" r="43" fill="#d2e7f2" opacity=".65"/>
+    <rect x="32" y="17" width="49" height="67" rx="7" fill="#d2e7f2" stroke="#146b91" stroke-width="2.6"/>
+    <rect x="22" y="27" width="49" height="69" rx="7" fill="#f5f8fa" stroke="#072340" stroke-width="2.6"/>
+    <g fill="none" stroke="#146b91" stroke-width="2.6" stroke-linecap="round">
+      <path d="M33 43h25M33 54h17M33 65h15M33 81h9"/>
+    </g>
+    <path d="m90 84 14 14" stroke="#146b91" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="77" cy="70" r="19" fill="#eaf3f8" stroke="#072340" stroke-width="2.6"/>
+    <g transform="rotate(28 77 70)" fill="none" stroke="#146b91" stroke-width="2.2" stroke-linecap="round">
+      <ellipse cx="77" cy="70" rx="6.5" ry="10"/>
+      <path d="M78 60c-6 6 4 13-2 20"/>
+    </g></g><text x="660" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="600" fill="#072340">Market Understanding</text><text x="660" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#4b5563">A considered perspective</text><g transform="translate(1018,116)">
+    <circle cx="60" cy="61" r="43" fill="#d2e7f2" opacity=".65"/>
+    <path d="M54 49h42a9 9 0 0 1 9 9v26a9 9 0 0 1-9 9h-1l2 13-16-13H54a9 9 0 0 1-9-9V58a9 9 0 0 1 9-9Z" fill="#d2e7f2" stroke="#072340" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M24 24h48a9 9 0 0 1 9 9v28a9 9 0 0 1-9 9H43L27 83l2-13h-5a9 9 0 0 1-9-9V33a9 9 0 0 1 9-9Z" fill="#f5f8fa" stroke="#072340" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M29 41h36M29 53h24" fill="none" stroke="#146b91" stroke-width="2.6" stroke-linecap="round"/>
+    <g fill="#146b91"><circle cx="65" cy="80" r="2.4"/><circle cx="77" cy="80" r="2.4"/><circle cx="89" cy="80" r="2.4"/></g></g><text x="1078" y="290" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="600" fill="#072340">Reliable Communication</text><text x="1078" y="325" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" fill="#4b5563">Clear and ongoing dialogue</text>
+    <text x="40" y="444" font-family="Arial, sans-serif" font-size="12" fill="#65717b">DIRECTION STUDY  ·  NAVY / SOFT BLUE  ·  ORIGINAL VECTOR ILLUSTRATIONS</text>
+    </svg>

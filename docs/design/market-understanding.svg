@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Market Understanding">
+    <circle cx="60" cy="61" r="43" fill="#d2e7f2" opacity=".65"/>
+    <rect x="32" y="17" width="49" height="67" rx="7" fill="#d2e7f2" stroke="#146b91" stroke-width="2.6"/>
+    <rect x="22" y="27" width="49" height="69" rx="7" fill="#f5f8fa" stroke="#072340" stroke-width="2.6"/>
+    <g fill="none" stroke="#146b91" stroke-width="2.6" stroke-linecap="round">
+      <path d="M33 43h25M33 54h17M33 65h15M33 81h9"/>
+    </g>
+    <path d="m90 84 14 14" stroke="#146b91" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="77" cy="70" r="19" fill="#eaf3f8" stroke="#072340" stroke-width="2.6"/>
+    <g transform="rotate(28 77 70)" fill="none" stroke="#146b91" stroke-width="2.2" stroke-linecap="round">
+      <ellipse cx="77" cy="70" rx="6.5" ry="10"/>
+      <path d="M78 60c-6 6 4 13-2 20"/>
+    </g></svg>

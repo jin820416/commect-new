@@ -1,0 +1,40 @@
+[
+  {
+    "anchorTop": 111.703125,
+    "check": "desktop-language-anchor",
+    "headerHeight": 88,
+    "url": "http://127.0.0.1:4173/en/service#quality-support"
+  },
+  {
+    "check": "mobile-menu-open",
+    "expanded": "true"
+  },
+  {
+    "check": "mobile-menu-after-navigation",
+    "expanded": "false",
+    "url": "/about"
+  },
+  {
+    "check": "gallery-next",
+    "counter": [
+      "2 / 7"
+    ]
+  },
+  {
+    "check": "gallery-previous",
+    "counter": [
+      "1 / 7"
+    ]
+  },
+  {
+    "check": "mobile-language",
+    "lang": "en",
+    "url": "/en/about"
+  },
+  {
+    "anchorTop": 95.765625,
+    "check": "mobile-language-anchor",
+    "headerHeight": 72,
+    "url": "http://127.0.0.1:4173/en/service#quality-support"
+  }
+]

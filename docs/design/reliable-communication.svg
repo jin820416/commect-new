@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Reliable Communication">
+    <circle cx="60" cy="61" r="43" fill="#d2e7f2" opacity=".65"/>
+    <path d="M54 49h42a9 9 0 0 1 9 9v26a9 9 0 0 1-9 9h-1l2 13-16-13H54a9 9 0 0 1-9-9V58a9 9 0 0 1 9-9Z" fill="#d2e7f2" stroke="#072340" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M24 24h48a9 9 0 0 1 9 9v28a9 9 0 0 1-9 9H43L27 83l2-13h-5a9 9 0 0 1-9-9V33a9 9 0 0 1 9-9Z" fill="#f5f8fa" stroke="#072340" stroke-width="2.6" stroke-linejoin="round"/>
+    <path d="M29 41h36M29 53h24" fill="none" stroke="#146b91" stroke-width="2.6" stroke-linecap="round"/>
+    <g fill="#146b91"><circle cx="65" cy="80" r="2.4"/><circle cx="77" cy="80" r="2.4"/><circle cx="89" cy="80" r="2.4"/></g></svg>
