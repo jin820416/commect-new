@@ -24,6 +24,8 @@
 
 서체는 국문 Pretendard와 영문 Inter를 로컬에서 제공합니다. Inter 공식 배포본과 SIL Open Font License는 `vendor/fonts/inter/`에 있으며 빌드 결과에도 함께 포함됩니다. 등장 애니메이션은 스크롤로 처음 보일 때 한 번 재생하고, 기기의 움직임 줄이기 설정을 반영합니다.
 
+로고는 `images/brand/commect-wordmark-navy.png`와 `commect-wordmark-white.png`를 사용합니다. 사진 위에서는 흰색, 흰 배경 헤더와 푸터에서는 남색을 표시합니다. 고해상도 원본과 재생성 기준은 `docs/design/commect-wordmark/`에 보관하며, 배포에는 최적화된 1024×240px PNG만 포함합니다.
+
 ## 주소와 배포
 
 국문은 기존 주소(`/`, `/about`, `/service`, `/process`, `/contact`)를 유지하고 영문은 `/en` 아래에서 제공합니다. `.html`과 기존 정책 쿼리 주소도 대응 페이지로 연결됩니다.

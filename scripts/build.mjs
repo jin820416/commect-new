@@ -21,8 +21,8 @@ function header(lang, page, solid) {
   <header class="site-header${solid ? ' header-solid' : ''}" data-header>
     <div class="container header-inner">
       <a class="brand" href="${route(lang)}" aria-label="COMMECT ${c.homeLabel}">
-        <img class="logo-dark" src="/images/logo.png" width="169" height="48" alt="COMMECT — Commodity Connect">
-        <img class="logo-light" src="/images/logo-inverted.png" width="169" height="48" alt="" aria-hidden="true">
+        <img class="logo-dark" src="/images/brand/commect-wordmark-navy.png" width="1024" height="240" alt="COMMECT — Commodity Connect">
+        <img class="logo-light" src="/images/brand/commect-wordmark-white.png" width="1024" height="240" alt="" aria-hidden="true">
       </a>
       <nav class="main-nav" id="main-navigation" aria-label="${lang === 'ko' ? '주 메뉴' : 'Main navigation'}">
         ${['about', 'service', 'process', 'contact'].map((p, i) => `<a href="${route(lang, p)}"${p === page ? ' aria-current="page"' : ''}>${c.nav[i]}</a>`).join('')}
@@ -40,7 +40,7 @@ function header(lang, page, solid) {
 function footer(lang) {
   const c = content[lang];
   return `<footer class="site-footer"><div class="container footer-grid">
-    <a class="footer-brand" href="${route(lang)}" aria-label="COMMECT ${c.homeLabel}"><img src="/images/logo.png" width="169" height="48" alt="COMMECT — Commodity Connect" loading="lazy"></a>
+    <a class="footer-brand" href="${route(lang)}" aria-label="COMMECT ${c.homeLabel}"><img src="/images/brand/commect-wordmark-navy.png" width="1024" height="240" alt="COMMECT — Commodity Connect" loading="lazy"></a>
     <div class="footer-details">
       <p>${company.legalName}<span class="separator">|</span>${c.footer.representative} ${company.representative}<span class="separator">|</span>${c.footer.registration}: ${company.registration}</p>
       <address>${escape(lang === 'ko' ? company.address : company.addressEn)}</address>
@@ -183,7 +183,7 @@ for (const lang of ['ko', 'en']) {
   }
 }
 await cp(path.join(root, 'assets'), path.join(out, 'assets'), { recursive: true });
-const usedImages = new Set([images.home, images.about, images.service, images.process, ...images.why, ...images.pillars, ...serviceImages, ...images.producers.map(f => 'producers/' + f), 'logo.png', 'logo-inverted.png', 'favicon.svg']);
+const usedImages = new Set([images.home, images.about, images.service, images.process, ...images.why, ...images.pillars, ...serviceImages, ...images.producers.map(f => 'producers/' + f), 'brand/commect-wordmark-navy.png', 'brand/commect-wordmark-white.png', 'favicon.svg']);
 for (const file of usedImages) {
   await mkdir(path.dirname(path.join(out, 'images', file)), { recursive: true });
   await cp(path.join(root, 'images', file), path.join(out, 'images', file));

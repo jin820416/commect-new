@@ -214,15 +214,15 @@ p {
 .brand {
   position:relative;
   display:block;
-  width:158px;
-  height:45px;
+  width:180px;
+  height:44px;
   flex-shrink:0
 }
 .brand img {
   position:absolute;
-  left:calc(100% * -12 / 145);
+  left:0;
   top:50%;
-  width:calc(100% * 169 / 145);
+  width:100%;
   height:auto;
   max-width:none;
   transform:translateY(-50%);
@@ -875,14 +875,12 @@ p {
 }
 .footer-grid {
   display:grid;
-  grid-template-columns:158px minmax(0,1fr) auto;
+  grid-template-columns:180px minmax(0,1fr) auto;
   gap:40px;
   align-items:start
 }
 .footer-brand img {
-  width:168px;
-  max-width:none;
-  transform:translateX(-12px)
+  width:180px
 }
 .footer-details {
   font-size:13px;
@@ -1023,7 +1021,10 @@ p {
   }
   .footer-grid {
     gap:28px;
-    grid-template-columns:144px minmax(0,1fr)
+    grid-template-columns:164px minmax(0,1fr)
+  }
+  .footer-brand img {
+    width:164px
   }
   .footer-phone {
     grid-column:2
@@ -1058,8 +1059,8 @@ p {
     width:calc(100% - 48px)
   }
   .brand {
-    width:148px;
-    height:42px
+    width:164px;
+    height:40px
   }
   .menu-toggle {
     display:block
@@ -1174,8 +1175,8 @@ p {
     gap:12px
   }
   .brand {
-    width:138px;
-    height:40px
+    width:148px;
+    height:36px
   }
   .header-actions {
     gap:10px
@@ -1465,8 +1466,7 @@ p {
     gap:24px
   }
   .footer-brand img {
-    width:161px;
-    transform:translateX(-11.5px)
+    width:164px
   }
   .footer-details {
     font-size:13px
@@ -1557,6 +1557,10 @@ p {
   }
 }
 @media(max-width:375px) {
+  .brand {
+    width:140px;
+    height:34px
+  }
   .pillar {
     gap:16px
   }
