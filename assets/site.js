@@ -31,7 +31,7 @@
   window.addEventListener('scroll', updateScroll, { passive: true });
   updateScroll();
 
-  // Preserve the service section when switching language, including older anchors.
+  // Preserve the current section when switching language.
   let initialAnchor;
   try { initialAnchor = decodeURIComponent(location.hash.slice(1)); } catch { initialAnchor = ''; }
   document.querySelectorAll('.language-link').forEach(link => {
@@ -72,6 +72,21 @@
         const hero = group?.dataset.revealGroup === 'hero';
         const index = group ? (groups.get(group) || 0) : 0;
         if (group) groups.set(group, index + 1);
+        // Photos open like a curtain from their outer edge while settling from a slight zoom.
+        if (element.hasAttribute('data-reveal-image')) {
+          const from = { left: 'inset(0 100% 0 0)', right: 'inset(0 0 0 100%)' }[element.dataset.revealImage] || 'inset(100% 0 0 0)';
+          const delay = Math.min(index * 120, 360);
+          const photo = element.querySelector('img');
+          [
+            element.animate([{ clipPath: from }, { clipPath: 'inset(0 0 0 0)' }], { duration: 1100, delay, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'backwards' }),
+            photo?.animate([{ transform: 'scale(1.12)' }, { transform: 'scale(1)' }], { duration: 1600, delay, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'backwards' }),
+          ].filter(Boolean).forEach(animation => {
+            active.add(animation);
+            const done = () => active.delete(animation);
+            animation.finished.then(done, done);
+          });
+          return;
+        }
         const animation = element.animate([
           { opacity: 0, transform: `translateY(${hero ? 18 : 24}px)` },
           { opacity: 1, transform: 'translateY(0)' },
@@ -90,7 +105,7 @@
         animation.finished.then(finish, finish);
       });
     }, { threshold: .08, rootMargin: '0px 0px -24px 0px' });
-    document.querySelectorAll('[data-reveal]').forEach(element => observer.observe(element));
+    document.querySelectorAll('[data-reveal], [data-reveal-image]').forEach(element => observer.observe(element));
     preference.addEventListener('change', event => {
       if (!event.matches) return;
       observer.disconnect();
@@ -106,19 +121,11 @@
   const button = form.querySelector('[data-submit]');
   const label = button.querySelector('span');
   let pending = false;
-  let configPromise;
+  const openedAt = Date.now();   // the server ignores forms submitted implausibly fast
 
   function notify(message, error = false) {
     status.textContent = message;
     status.classList.toggle('is-error', error);
-  }
-  function configuration(signal) {
-    if (!configPromise) {
-      configPromise = fetch('/assets/inquiry-config.json', { cache: 'no-cache', signal })
-        .then(response => { if (!response.ok) throw new Error('Configuration unavailable'); return response.json(); })
-        .catch(error => { configPromise = null; throw error; });
-    }
-    return configPromise;
   }
   form.addEventListener('input', event => {
     event.target.removeAttribute('aria-invalid');
@@ -128,7 +135,11 @@
     event.preventDefault();
     if (pending) return;
     const data = new FormData(form);
-    const payload = Object.fromEntries(['name', 'company', 'phone', 'email', 'message'].map(key => [key, String(data.get(key) || '').trim()]));
+    const payload = Object.fromEntries(['kind', 'name', 'company', 'phone', 'email', 'message', 'website'].map(key => [key, String(data.get(key) || '').trim()]));
+    payload.consent = Boolean(form.elements.namedItem('consent')?.checked);
+    const mailConsent = form.elements.namedItem('consent_mail');
+    if (mailConsent) payload.consent_mail = Boolean(mailConsent.checked);
+    payload.lang = document.documentElement?.lang === 'en' ? 'en' : 'ko';
     for (const key of ['name', 'company', 'email']) {
       const input = form.elements.namedItem(key);
       input.setCustomValidity(payload[key] ? '' : messages.invalid);
@@ -149,14 +160,14 @@
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
     try {
-      const config = await configuration(controller.signal);
-      const endpoint = new URL(`/rest/v1/${encodeURIComponent(config.table)}`, config.url);
-      const response = await fetch(endpoint, {
+      payload.elapsed = Date.now() - openedAt;
+      const response = await fetch('/api/inquiry', {
         method: 'POST',
-        headers: { apikey: config.key, Authorization: `Bearer ${config.key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload), signal: controller.signal,
       });
-      if (!response.ok) throw new Error('Enquiry was not accepted');
+      if (response.status === 400) { notify(messages.invalid, true); status.focus({ preventScroll: true }); return; }
+      if (!response.ok) throw new Error('Inquiry was not delivered');
       form.reset();
       form.querySelectorAll('[aria-invalid]').forEach(input => input.removeAttribute('aria-invalid'));
       notify(messages.success);

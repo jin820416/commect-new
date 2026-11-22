@@ -1,19 +1,31 @@
-import { mkdir, writeFile, readFile, cp, rm } from 'node:fs/promises';
+import { mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { content, company, images, serviceIds, serviceImages, legacyAnchors } from '../content/site.mjs';
+import { content, company, images, briefings } from '../content/site.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, 'dist');
-const pages = ['home', 'about', 'service', 'process', 'contact', 'policy', 'privacy', '404'];
+const pages = ['home', 'sourcing', 'market', 'about', 'contact', 'policy', 'privacy', '404'];
+const navPages = ['sourcing', 'market', 'about', 'contact'];
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const lines = value => escape(value).replace(/\n/g, '<br class="desktop-break"> ');
 const img = file => `/images/${file}`;
 const route = (lang, page = 'home') => `${lang === 'en' ? '/en' : ''}${page === 'home' ? (lang === 'en' ? '' : '/') : '/' + page}`;
 const arrow = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const globe = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.4"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z" stroke="currentColor" stroke-width="1.4"/></svg>';
-const button = (lang, label, page = 'contact', extra = '') => `<a class="button ${extra}" data-reveal href="${route(lang, page)}">${arrow}<span>${escape(label)}</span></a>`;
+const button = (href, label, extra = '') => `<a class="button ${extra}" data-reveal href="${href}">${arrow}<span>${escape(label)}</span></a>`;
+const textLink = (href, label) => `<a class="text-link" href="${href}">${escape(label)} ${arrow}</a>`;
+const photo = (file, alt, extra = '', size = 'width="2000" height="1333"') => `<img${extra ? ` class="${extra}"` : ''} src="${img(file)}" alt="${escape(alt)}" loading="lazy" decoding="async" ${size}>`;
+const days = { 월: 'Mon', 화: 'Tue', 수: 'Wed', 목: 'Thu', 금: 'Fri', 토: 'Sat', 일: 'Sun' };
+const dayLabel = (lang, day) => lang === 'en' ? days[day] : day;
 
+const alts = {
+  ko: { sourcing: '창고에 쌓인 생두 마대', info: '모니터에 표시된 가격 차트', trust: '위에서 내려다본 컨테이너 야적장', expertise: '산지 건조장을 둘러보는 사람들', commercial: '브라질 커피 생두 마대', specialty: '건조대 위에서 말리는 커피', daily: '어두운 화면의 가격 추이 차트', monthly: '모니터에 표시된 가격 차트', aboutExpertise: '산지 건조장을 둘러보는 사람들', aboutSourcing: '생두 클로즈업', aboutMarket: '여러 개의 가격 차트와 시세표가 띄워진 화면', aboutTrust: '위에서 내려다본 항구의 컨테이너', contact: '인천종합비즈니스센터 건물 전경' },
+  en: { sourcing: 'Sacks of green coffee in a warehouse', info: 'A price chart on a monitor', trust: 'A container yard seen from above', expertise: 'Visitors at a coffee drying station at origin', commercial: 'A sack of Brazilian green coffee', specialty: 'Coffee drying on raised beds', daily: 'A price chart on a dark screen', monthly: 'A price chart on a monitor', aboutExpertise: 'Visitors at a coffee drying station at origin', aboutSourcing: 'Green coffee beans, close up', aboutMarket: 'Screens showing price charts and quotes', aboutTrust: 'Port containers seen from above', contact: 'Incheon Business Center building' },
+};
+
+// Transparent over the hero photo; white once scrolled (site.js adds is-scrolled).
+// Pages without a hero photo start solid.
 function header(lang, page, solid) {
   const c = content[lang];
   const other = lang === 'ko' ? 'en' : 'ko';
@@ -25,7 +37,7 @@ function header(lang, page, solid) {
         <img class="logo-light" src="/images/brand/commect-wordmark-white.png" width="1024" height="240" alt="" aria-hidden="true">
       </a>
       <nav class="main-nav" id="main-navigation" aria-label="${lang === 'ko' ? '주 메뉴' : 'Main navigation'}">
-        ${['about', 'service', 'process', 'contact'].map((p, i) => `<a href="${route(lang, p)}"${p === page ? ' aria-current="page"' : ''}>${c.nav[i]}</a>`).join('')}
+        ${navPages.map(p => `<a href="${route(lang, p)}"${p === page ? ' aria-current="page"' : ''}>${escape(c.nav[p])}</a>`).join('')}
       </nav>
       <div class="header-actions">
         <div class="language-switch" aria-label="${lang === 'ko' ? '언어 선택' : 'Language'}">${globe}
@@ -39,121 +51,179 @@ function header(lang, page, solid) {
 
 function footer(lang) {
   const c = content[lang];
-  return `<footer class="site-footer"><div class="container footer-grid">
-    <a class="footer-brand" href="${route(lang)}" aria-label="COMMECT ${c.homeLabel}"><img src="/images/brand/commect-wordmark-navy.png" width="1024" height="240" alt="COMMECT — Commodity Connect" loading="lazy"></a>
-    <div class="footer-details">
-      <p>${company.legalName}<span class="separator">|</span>${c.footer.representative} ${company.representative}<span class="separator">|</span>${c.footer.registration}: ${company.registration}</p>
+  return `<footer class="site-footer"><div class="container footer-inner">
+    <a class="footer-brand" href="${route(lang)}" aria-label="COMMECT ${c.homeLabel}"><img src="/images/brand/commect-wordmark-white.png" width="1024" height="240" alt="COMMECT — Commodity Connect" loading="lazy"></a>
+    <div class="footer-info">
+      <span>${company.legalName}</span><span>${c.footer.representative} ${company.representative}</span><span>${c.footer.registration} ${company.registration}</span>
       <address>${escape(lang === 'ko' ? company.address : company.addressEn)}</address>
-      <a class="footer-email" href="mailto:${company.email}">${company.email}</a>
-      <div class="footer-bottom"><div class="footer-policies"><a href="${route(lang, 'policy')}">${c.titles.policy}</a><a href="${route(lang, 'privacy')}">${c.titles.privacy}</a></div><p class="copyright">${c.footer.copyright}</p></div>
+      <a href="mailto:${company.email}">${company.email}</a>
     </div>
-    <div class="footer-phone"><span>${c.footer.phone}</span><a href="tel:+821048365159">${lang === 'ko' ? company.phone : company.internationalPhone}</a></div>
+    <div class="footer-bottom"><p>${escape(c.footer.disclaimer)}</p><p><a href="${route(lang, 'policy')}">${c.titles.policy}</a><span aria-hidden="true"> · </span><a href="${route(lang, 'privacy')}">${c.titles.privacy}</a><span aria-hidden="true"> · </span>${c.footer.copyright}</p></div>
   </div></footer>
   <a class="back-to-top" href="#top" aria-label="${lang === 'ko' ? '맨 위로' : 'Back to top'}" hidden data-top><svg viewBox="0 0 24 24" aria-hidden="true" fill="none"><path d="m5 15 7-7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`;
 }
 
-function hero(lang, page) {
+function pageHero(file, title, text) {
+  return `<section class="hero hero-page" aria-labelledby="page-title">
+    <img class="hero-image" src="${img(file)}" alt="" fetchpriority="high" decoding="async">
+    <div class="hero-shade"></div>
+    <div class="container hero-content" data-reveal-group="hero"><h1 id="page-title" data-reveal>${escape(title)}</h1><p class="hero-text" data-reveal>${lines(text)}</p></div>
+  </section>`;
+}
+
+// Photo runs to the screen edge on its side; size varies the height for rhythm.
+// href makes the photo a second (mouse-only) link to the same page as the text link.
+function split({ id = '', tinted = false, reversed = false, size = '', href = '', file, alt, label, title, text, extra = '' }) {
+  const image = photo(file, alt);
+  const media = href ? `<a href="${href}" tabindex="-1" aria-hidden="true">${image}</a>` : image;
+  return `<section class="section${tinted ? ' section-tinted' : ''}"${id ? ` id="${id}"` : ''}><div class="split${reversed ? ' is-reversed' : ''}" data-reveal-group>
+    <div class="split-media${size ? ` media-${size}` : ''}" data-reveal-image="${reversed ? 'right' : 'left'}">${media}</div>
+    <div class="split-copy" data-reveal><p class="label">${escape(label)}</p><h2 class="section-title">${escape(title)}</h2><p class="lead">${lines(text)}</p>${extra}</div>
+  </div></section>`;
+}
+
+// Photo card: the text panel overlaps the bottom of the photo. kind is an optional small label;
+// href/more add a "자세히 보기" link.
+function card(file, alt, [title, text, kind], en = false, href = '', more = '') {
+  return `<article class="card"><div class="card-media" data-reveal-image="up">${photo(file, alt)}</div><div class="card-body" data-reveal>${kind ? `<p class="label">${escape(kind)}</p>` : ''}<h2${en ? ' lang="en"' : ''}>${escape(title)}</h2><p>${escape(text)}</p>${href ? textLink(href, more) : ''}</div></article>`;
+}
+
+function band({ id = '', file, alt, label, title, text }) {
+  return `<section class="band"${id ? ` id="${id}"` : ''}>${photo(file, alt, 'band-image')}<div class="band-shade"></div>
+    <div class="container band-content" data-reveal-group><p class="label" data-reveal>${escape(label)}</p><h2 class="section-title" data-reveal>${escape(title)}</h2><p class="lead" data-reveal>${lines(text)}</p></div></section>`;
+}
+
+function contactBand(lang) {
   const c = content[lang];
-  const h = c.hero[page];
-  const home = page === 'home';
-  return `<section class="hero ${home ? 'hero-home' : 'hero-page'}" aria-labelledby="page-title">
-    <img class="hero-image" src="${img(images[page])}" alt="" fetchpriority="high" decoding="async">
-    <div class="hero-shade"></div><div class="container hero-content" data-reveal-group="hero">
-      <h1 id="page-title" lang="en">${h.title.map((t, i) => `<span data-reveal${i ? ' class="hero-light"' : ''}>${escape(t)}</span>`).join('')}</h1>
-      ${home ? `<p class="hero-lead" data-reveal>${escape(h.lead)}</p>` : ''}
-      <p class="hero-description" data-reveal>${lines(h.text)}</p>
-      ${home ? button(lang, c.contactButton, 'contact', 'button-light') : ''}
-    </div></section>`;
+  return `<section class="contact-band"><div class="container contact-band-inner" data-reveal-group><div data-reveal><h2>${escape(c.contactBand.title)}</h2><p>${escape(c.contactBand.text)}</p></div>${button(route(lang, 'contact'), c.contactButton, 'button-light')}</div></section>`;
 }
 
-function sectionHeading(label, title, text = '', extra = '') {
-  return `<div class="section-heading ${extra}" data-reveal><p class="eyebrow" lang="en">/ ${escape(label)} /</p><h2>${lines(title)}</h2>${text ? `<p class="section-description">${lines(text)}</p>` : ''}</div>`;
+function briefingList(lang) {
+  return `<div class="briefing-list">${briefings.slice(0, 3).map(b => `<a class="briefing-item" href="${route(lang, 'market')}"><span class="briefing-date">${escape(b.date)}</span><span class="briefing-title" lang="ko">${escape(b.title)}</span></a>`).join('')}</div>`;
 }
 
-function pillars(lang) {
-  return `<div class="pillars" data-reveal-group>${content[lang].pillars.map(([title, text], i) => `<div class="pillar" data-reveal><img class="pillar-illustration" src="${img(images.pillars[i])}" width="64" height="64" alt="" loading="lazy" decoding="async"><div class="pillar-copy"><h3 lang="en">${escape(title)}</h3><p>${escape(text)}</p></div></div>`).join('')}</div>`;
+function textField(t, prefix, key, required) {
+  const type = key === 'email' ? 'email' : key === 'phone' ? 'tel' : 'text';
+  const auto = { name: 'name', company: 'organization', phone: 'tel', email: 'email' }[key];
+  return `<div class="form-field"><label for="${prefix}-${key}">${t.labels[key]}${required ? '<span class="required" aria-hidden="true">*</span>' : `<span class="optional">${t.optional}</span>`}</label><input id="${prefix}-${key}" name="${key}" type="${type}" autocomplete="${auto}" maxlength="${key === 'email' ? 254 : 120}"${required ? ' required' : ''} aria-describedby="${prefix}-status"></div>`;
 }
 
-function serviceCards(lang) {
-  return `<div class="service-grid" data-reveal-group>${content[lang].services.map(([en, ko], i) => `<a class="service-card" data-reveal href="${route(lang, 'service')}#${serviceIds[i]}"><img src="${img(serviceImages[i])}" alt="" loading="lazy" width="640" height="420"><div class="service-card-shade"></div><div class="service-card-label"><h3 lang="en">${escape(en)}</h3>${lang === 'ko' ? `<p>${escape(ko)}</p>` : ''}</div><span class="service-card-arrow">${arrow}</span></a>`).join('')}</div>`;
-}
-
-function contactForm(lang) {
-  const t = content[lang].contact;
-  return `<form class="inquiry-form" data-inquiry-form novalidate>
-    <p class="required-note">${t.requiredNote}</p><div class="form-grid">
-    ${['name', 'company', 'phone', 'email'].map(key => `<div class="form-field"><label for="inquiry-${key}">${t.labels[key]}${['name', 'company', 'email'].includes(key) ? `<span class="required" aria-hidden="true">*</span>` : `<span class="optional">${t.optional}</span>`}</label><input id="inquiry-${key}" name="${key}" type="${key === 'email' ? 'email' : key === 'phone' ? 'tel' : 'text'}" autocomplete="${{name:'name', company:'organization', phone:'tel', email:'email'}[key]}" maxlength="${key === 'email' ? 254 : 120}"${key !== 'phone' ? ' required' : ''} aria-describedby="inquiry-status"></div>`).join('')}
-    <div class="form-field field-full"><label for="inquiry-message">${t.labels.message}<span class="optional">${t.optional}</span></label><textarea id="inquiry-message" name="message" rows="5" maxlength="5000" placeholder="${t.placeholder}"></textarea></div>
-    </div>
-    <div class="form-trap" aria-hidden="true"><label for="inquiry-website">Website</label><input id="inquiry-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
-    <div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div>
-    <p class="form-status" id="inquiry-status" role="status" aria-live="polite" tabindex="-1"></p>
+function form(lang, kind) {
+  const t = content[lang][kind];
+  const prefix = kind === 'contact' ? 'inquiry' : 'subscribe';
+  const kindField = kind === 'contact'
+    ? `<fieldset class="kind-field"><legend>${t.kindLabel}<span class="required" aria-hidden="true">*</span></legend><div class="kind-options">${t.kinds.map((k, i) => `<label class="kind-option"><input type="radio" name="kind" value="${escape(k)}"${i ? '' : ' checked'}><span>${escape(k)}</span></label>`).join('')}</div></fieldset>`
+    : `<input type="hidden" name="kind" value="${escape(t.kind)}">`;
+  const fields = kind === 'contact'
+    ? `${textField(t, prefix, 'company', true)}${textField(t, prefix, 'name', true)}${textField(t, prefix, 'email', true)}${textField(t, prefix, 'phone', false)}<div class="form-field field-full"><label for="${prefix}-message">${t.labels.message}<span class="optional">${t.optional}</span></label><textarea id="${prefix}-message" name="message" rows="6" maxlength="5000"></textarea></div>`
+    : `${textField(t, prefix, 'company', true)}${textField(t, prefix, 'name', true)}<div class="form-field field-full">${textField(t, prefix, 'email', true).slice('<div class="form-field">'.length, -'</div>'.length)}</div>`;
+  const consents = kind === 'contact'
+    ? `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div>`
+    : `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div><div class="form-consent"><label><input type="checkbox" name="consent_mail" required><span>${t.consentMail}</span></label></div>`;
+  return `<form class="inquiry-form form-panel" data-inquiry-form novalidate>
+    ${kindField}<div class="form-grid">${fields}</div>
+    <div class="form-trap" aria-hidden="true"><label for="${prefix}-website">Website</label><input id="${prefix}-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+    ${consents}
+    <p class="form-status" id="${prefix}-status" role="status" aria-live="polite" tabindex="-1"></p>
     <div class="form-submit"><button class="button" type="submit" data-submit>${arrow}<span>${t.submit}</span></button></div>
     <noscript><p>${t.noScript}</p></noscript>
   </form>`;
 }
 
-function contactSection(lang, standalone = false) {
-  const c = content[lang];
-  return `<section class="section contact-section${standalone ? ' contact-standalone' : ''}" id="contact">
-    <span id="s2025112800efcd7152995" class="legacy-anchor" aria-hidden="true"></span>
-    <div class="container">${standalone ? `<div class="section-heading" data-reveal><p class="eyebrow" lang="en">/ CONTACT /</p><h1 id="page-title">${lines(c.contact.title)}</h1><p class="section-description">${escape(c.contact.text)}</p></div>` : sectionHeading('CONTACT', c.contact.title, c.contact.text)}
-    <div class="contact-card" data-reveal>${contactForm(lang)}</div></div></section>`;
-}
-
-function contactCta(lang) {
-  const c = content[lang];
-  return `<section class="contact-cta"><div class="container cta-inner" data-reveal-group><div data-reveal><h2>${escape(c.cta.title)}</h2><p>${escape(c.cta.text)}</p></div>${button(lang, c.contactButton)}</div></section>`;
-}
-
 function home(lang) {
   const c = content[lang];
-  return `${hero(lang, 'home')}
-    <section class="section"><div class="container">${sectionHeading('WHO WE ARE', c.home.whoTitle, c.home.whoText)}${pillars(lang)}<div class="section-action">${button(lang, c.more, 'about')}</div></div></section>
-    <section class="section section-tinted"><div class="container">${sectionHeading('OUR SERVICE', c.home.serviceTitle, c.home.serviceText)}${serviceCards(lang)}<div class="section-action">${button(lang, c.more, 'service')}</div></div></section>
-    <section class="section why-section"><div class="container">${sectionHeading('WHY US', c.home.whyTitle)}<div class="why-list">${c.home.why.map(([word, title, text], i) => `<article class="split-row why-row${i % 2 ? ' is-reversed' : ''}" data-reveal-group><div class="split-copy" data-reveal><h3>${escape(title)}</h3><p>${escape(text)}</p><span class="decorative-word" lang="en" aria-hidden="true">${word}</span></div><div class="split-media" data-reveal><img src="${img(images.why[i])}" alt="${lang === 'ko' ? ['커피 산지의 가공 시설', '커피 농장 풍경', '커피와 함께하는 비즈니스 대화'][i] : ['Coffee processing at origin', 'A coffee farm landscape', 'A business conversation over coffee'][i]}" loading="lazy" width="690" height="450"></div></article>`).join('')}</div></div></section>
-    ${contactSection(lang)}`;
+  const h = c.home;
+  const a = alts[lang];
+  const latest = briefings[0];
+  return `<section class="hero hero-home" aria-labelledby="page-title">
+      <img class="hero-image" src="${img(images.home)}" alt="" fetchpriority="high" decoding="async">
+      <div class="hero-shade"></div>
+      <div class="container hero-content" data-reveal-group="hero">
+        <div class="hero-copy"><h1 id="page-title" lang="en">${h.title.map((t, i) => `<span data-reveal${i ? ' class="hero-light"' : ''}>${escape(t)}</span>`).join('')}</h1><p class="hero-lead" data-reveal>${escape(h.lead)}</p><p class="hero-text" data-reveal>${lines(h.text)}</p></div>
+        <a class="latest-bar" data-reveal href="${route(lang, 'market')}"><span class="latest-label">${escape(h.latest)} ${escape(latest.date)}</span><span class="latest-title" lang="ko">${escape(latest.title)}</span>${arrow}</a>
+      </div>
+    </section>
+    ${split({ id: 'sourcing', size: 'tall', href: route(lang, 'sourcing'), file: images.homeSourcing, alt: a.sourcing, ...h.sourcing, extra: textLink(route(lang, 'sourcing'), c.more) })}
+    ${split({ id: 'insight', tinted: true, reversed: true, href: route(lang, 'market'), file: images.homeInfo, alt: a.info, ...h.info, extra: `${briefingList(lang)}${button(`${route(lang, 'market')}#subscribe`, h.info.button)}` })}
+    ${band({ id: 'partnership', file: images.homeTrust, alt: a.trust, ...h.trust })}
+    ${split({ id: 'expertise', size: 'short', href: route(lang, 'about'), file: images.homeExpertise, alt: a.expertise, ...h.expertise, extra: textLink(route(lang, 'about'), c.more) })}
+    ${contactBand(lang)}`;
+}
+
+function sourcing(lang) {
+  const c = content[lang];
+  const s = c.sourcing;
+  const a = alts[lang];
+  return `${pageHero(images.sourcing, s.title, s.text)}
+    <section class="section"><div class="container card-grid" data-reveal-group>${card(images.commercial, a.commercial, s.commercial)}${card(images.specialty, a.specialty, s.specialty)}</div></section>
+    <section class="section section-tinted"><div class="container"><h2 class="section-title centered" data-reveal>${escape(s.tilesTitle)}</h2>
+      <div class="tiles" data-reveal-group>${s.tiles.map((word, i) => `<figure class="tile" data-reveal-image="up">${photo(images.tiles[i], s.tileAlts[i])}<figcaption><strong>${escape(word)}</strong><span>${escape(s.tileTexts[i])}</span></figcaption></figure>`).join('')}</div></div></section>
+    ${contactBand(lang)}`;
+}
+
+function market(lang) {
+  const c = content[lang];
+  const m = c.market;
+  const a = alts[lang];
+  return `${pageHero(images.market, m.title, m.text)}
+    <section class="section"><div class="container"><h2 class="section-title" data-reveal>${escape(m.listTitle)}</h2>
+      <div class="briefing-table">${briefings.slice(0, 10).map(b => `<article class="briefing-row" data-reveal><p class="briefing-date">${escape(b.date)} (${escape(dayLabel(lang, b.day))})</p><div class="briefing-body" lang="ko"><h3>${escape(b.title)}</h3><p>${escape(b.line)}</p></div></article>`).join('')}</div>
+      ${m.listNote ? `<p class="note">${escape(m.listNote)}</p>` : ''}</div></section>
+    <section class="section section-tinted"><div class="container card-grid" data-reveal-group>${card(images.daily, a.daily, m.daily, true)}${card(images.monthly, a.monthly, m.monthly, true)}</div></section>
+    <section class="section" id="subscribe"><div class="container form-layout" data-reveal-group>
+      <div class="form-intro" data-reveal><h2 class="section-title">${escape(m.subscribeTitle)}</h2><p class="lead">${escape(m.subscribeText)}</p></div>
+      <div data-reveal>${form(lang, 'subscribe')}</div></div></section>`;
 }
 
 function about(lang) {
   const c = content[lang];
-  return `${hero(lang, 'about')}<section class="section"><div class="container">${sectionHeading('OUR APPROACH', c.about.title, c.about.text)}${pillars(lang)}</div></section>
-    <section class="section section-tinted"><div class="container">${sectionHeading('NETWORK', c.about.networkTitle, c.about.networkText)}<div class="network-layout" data-reveal-group><div class="origin-gallery" data-reveal data-gallery role="region" aria-roledescription="${lang === 'ko' ? '사진 슬라이드' : 'carousel'}" aria-label="${c.about.photo}">
-      <div class="gallery-images">${images.producers.map((file, i) => `<img src="${img('producers/' + file)}" alt="${c.about.photo} ${i + 1}" width="480" height="600"${i ? ' hidden loading="lazy"' : ''}>`).join('')}</div>
-      <div class="gallery-controls"><button type="button" data-gallery-prev aria-label="${c.about.previous}"><span aria-hidden="true">←</span></button><span data-gallery-status aria-live="polite">1 / ${images.producers.length}</span><button type="button" data-gallery-next aria-label="${c.about.next}"><span aria-hidden="true">→</span></button></div></div>
-      <div class="network-copy">${c.about.networkItems.map(([title, text]) => `<article data-reveal><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join('')}</div></div></div></section>${contactCta(lang)}`;
+  const h = c.home;
+  const a = alts[lang];
+  const v = c.about.values;
+  const biz = c.about.business;
+  return `${pageHero(images.about, c.about.title, c.about.text)}
+    ${split({ id: 'expertise', file: images.aboutExpertise, alt: a.aboutExpertise, ...h.expertise })}
+    <section class="section section-tinted" id="values"><div class="container">
+      <div data-reveal><p class="label">${escape(v.label)}</p><h2 class="section-title">${escape(v.title)}</h2></div>
+      <div class="values" data-reveal-group>${v.items.map(([title, text], i) => `<div class="value" data-reveal><img src="${img(images.values[i])}" width="64" height="64" alt="" loading="lazy"><h3>${escape(title)}</h3><p>${escape(text)}</p></div>`).join('')}</div>
+    </div></section>
+    <section class="section" id="business"><div class="container">
+      <div data-reveal><p class="label">${escape(biz.label)}</p><h2 class="section-title">${escape(biz.title)}</h2></div>
+      <div class="card-grid business" data-reveal-group>${card(images.aboutSourcing, a.aboutSourcing, [c.nav.sourcing, h.sourcing.text.replace('\n', ' ')], false, route(lang, 'sourcing'), c.more)}${card(images.aboutMarket, a.aboutMarket, [c.nav.market, h.info.text.replace('\n', ' ')], false, route(lang, 'market'), c.more)}</div>
+    </div></section>
+    ${band({ id: 'partnership', file: images.aboutTrust, alt: a.aboutTrust, ...h.trust })}
+    ${contactBand(lang)}`;
 }
 
-function service(lang) {
+function contactPage(lang) {
   const c = content[lang];
-  return `${hero(lang, 'service')}<div class="service-jump"><nav class="container service-jump-inner" aria-label="${lang === 'ko' ? '서비스 항목' : 'Service areas'}">${c.services.map(([en, title], i) => `<a href="#${serviceIds[i]}">${escape(title)}</a>`).join('')}</nav></div>
-    <section class="section service-details"><div class="container">${c.services.map(([en, title, text], i) => `<article class="split-row service-row${i % 2 ? ' is-reversed' : ''}" data-reveal-group id="${serviceIds[i]}"><span class="legacy-anchor" id="${legacyAnchors[i]}" aria-hidden="true"></span><div class="split-media" data-reveal><img src="${img(serviceImages[i])}" alt="${escape(title)}" loading="lazy" width="690" height="450"></div><div class="split-copy" data-reveal>${lang === 'ko' ? `<p class="service-overline" lang="en">${en}</p>` : ''}<h2>${escape(title)}</h2><div class="copy-rule"></div><p>${escape(text)}</p></div></article>`).join('')}</div></section>${contactCta(lang)}`;
-}
-
-function processPage(lang) {
-  const c = content[lang];
-  return `${hero(lang, 'process')}<section class="section"><div class="container">${sectionHeading('WORKFLOW', c.process.title, c.process.text)}<ol class="process-grid" data-reveal-group>${c.process.steps.map(([title, text], i) => `<li class="process-card" data-reveal><div class="process-card-heading"><span class="step-number">${String(i + 1).padStart(2, '0')}</span><h3>${escape(title)}</h3></div><p>${escape(text)}</p></li>`).join('')}</ol></div></section>${contactCta(lang)}`;
+  const p = c.contactPage;
+  return `${pageHero(images.contactHero, p.title, p.text)}
+    <section class="section contact-section"><div class="container form-layout" data-reveal-group>
+      <div class="contact-aside"><dl class="overview" data-reveal><div><dt>${p.email}</dt><dd><a href="mailto:${company.email}">${company.email}</a></dd></div><div><dt>${p.address}</dt><dd>${escape(lang === 'ko' ? company.address : company.addressEn)}</dd></div></dl><div class="contact-media" data-reveal-image="up">${photo(images.contact, alts[lang].contact, '', 'width="1065" height="1335"')}</div></div>
+      <div data-reveal>${form(lang, 'contact')}</div>
+    </div></section>`;
 }
 
 function legal(lang, page) {
   const c = content[lang];
   const sections = page === 'policy' ? c.legal.policySections : c.legal.privacySections;
-  return `<section class="section legal-page"><div class="container legal-container"><p class="eyebrow" lang="en">/ ${page === 'policy' ? 'TERMS OF USE' : 'PRIVACY POLICY'} /</p><h1 id="page-title">${c.titles[page]}</h1><p class="legal-intro">${escape(page === 'policy' ? c.legal.policyIntro : c.legal.privacyIntro)}</p><p class="legal-date">${c.legal.date}</p>${sections.map(([title, text], i) => `<section class="legal-section"${i === 0 && page === 'privacy' ? ' id="collection"' : ''}><h2>${i + 1}. ${escape(title)}</h2>${text.split('\n\n').map(paragraph => `<p>${escape(paragraph)}</p>`).join('')}</section>`).join('')}<a class="text-link" href="${route(lang, 'contact')}">${c.contactButton} ${arrow}</a></div></section>`;
+  return `<section class="section legal-page"><div class="container legal-container"><h1 id="page-title">${c.titles[page]}</h1><p class="legal-intro">${escape(page === 'policy' ? c.legal.policyIntro : c.legal.privacyIntro)}</p><p class="legal-date">${c.legal.date}</p>${sections.map(([title, text], i) => `<section class="legal-section"${i === 0 && page === 'privacy' ? ' id="collection"' : ''}><h2>${i + 1}. ${escape(title)}</h2>${text.split('\n\n').map(paragraph => `<p>${escape(paragraph)}</p>`).join('')}</section>`).join('')}${textLink(route(lang, 'contact'), c.contactButton)}</div></section>`;
 }
 
 function notFound(lang) {
   const c = content[lang];
-  return `<section class="not-found"><div class="container"><p class="eyebrow">404</p><h1 id="page-title">${escape(c.notFound.title)}</h1><p>${lines(c.notFound.text)}</p>${button(lang, c.backHome, 'home')}</div></section>`;
+  return `<section class="not-found"><div class="container"><p class="label">404</p><h1 id="page-title">${escape(c.notFound.title)}</h1><p class="lead">${lines(c.notFound.text)}</p>${button(route(lang), c.backHome)}</div></section>`;
 }
 
 function document(lang, page) {
   const c = content[lang];
-  const solid = ['contact', 'policy', 'privacy', '404'].includes(page);
-  const renderers = { home, about, service, process: processPage, contact: contactSection, policy: legal, privacy: legal, '404': notFound };
-  const body = page === 'contact' ? contactSection(lang, true) : renderers[page](lang, page);
-  const title = `${c.titles[page]} | COMMECT`;
+  const renderers = { home, sourcing, market, about, contact: contactPage, policy: legal, privacy: legal, '404': notFound };
+  const body = renderers[page](lang, page);
+  const title = page === 'home' ? `COMMECT | ${c.titles.home}` : `${c.titles[page]} | COMMECT`;
   const image = img(images[page] || images.home);
-  const client = ['home', 'contact'].includes(page) ? `<script type="application/json" id="inquiry-messages">${JSON.stringify(c.contact).replace(/</g, '\\u003c')}</script>` : '';
+  const formKind = { contact: 'contact', market: 'subscribe' }[page];
+  const client = formKind ? `<script type="application/json" id="inquiry-messages">${JSON.stringify(c[formKind]).replace(/</g, '\\u003c')}</script>` : '';
   return `<!DOCTYPE html>
 <!-- Generated by scripts/build.mjs. Edit content/site.mjs and assets/ to make changes. -->
 <html lang="${lang}" id="top"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -164,9 +234,9 @@ ${['ko', 'en'].map(l => `<link rel="alternate" hreflang="${l}" href="${company.o
 <meta property="og:type" content="website"><meta property="og:site_name" content="COMMECT"><meta property="og:locale" content="${c.locale}"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(c.description)}"><meta property="og:url" content="${company.origin}${route(lang, page)}"><meta property="og:image" content="${company.origin}${image}">
 ${['policy', 'privacy', '404'].includes(page) ? '<meta name="robots" content="noindex,follow">' : ''}
 <meta name="theme-color" content="#072340"><link rel="icon" type="image/svg+xml" sizes="any" href="/images/favicon.svg">
-<link rel="preload" href="/vendor/fonts/inter/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/vendor/fonts/${lang === 'en' ? 'inter/InterVariable.woff2' : 'pretendard/web/variable/woff2/PretendardVariable.woff2'}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/site.css"><script src="/assets/site.js" defer></script></head>
-<body class="page-${page}" data-locale="${lang}">${header(lang, page, solid)}<main id="main">${body}</main>${footer(lang)}${client}</body></html>\n`.replace(/[\t ]+$/gm, '');
+<body class="page-${page}" data-locale="${lang}">${header(lang, page, ['policy', 'privacy', '404'].includes(page))}<main id="main">${body}</main>${footer(lang)}${client}</body></html>\n`.replace(/[\t ]+$/gm, '');
 }
 
 // Only generated site files and referenced assets enter the deployment bundle.
@@ -183,7 +253,7 @@ for (const lang of ['ko', 'en']) {
   }
 }
 await cp(path.join(root, 'assets'), path.join(out, 'assets'), { recursive: true });
-const usedImages = new Set([images.home, images.about, images.service, images.process, ...images.why, ...images.pillars, ...serviceImages, ...images.producers.map(f => 'producers/' + f), 'brand/commect-wordmark-navy.png', 'brand/commect-wordmark-white.png', 'favicon.svg']);
+const usedImages = new Set([...Object.values(images).flat(), 'brand/commect-wordmark-navy.png', 'brand/commect-wordmark-white.png', 'favicon.svg']);
 for (const file of usedImages) {
   await mkdir(path.dirname(path.join(out, 'images', file)), { recursive: true });
   await cp(path.join(root, 'images', file), path.join(out, 'images', file));
@@ -198,6 +268,4 @@ for (const base of [root, out]) {
   await writeFile(path.join(base, 'sitemap.xml'), sitemap);
   await writeFile(path.join(base, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${company.origin}/sitemap.xml\n`);
 }
-const config = JSON.parse(await readFile(path.join(root, 'assets/inquiry-config.json'), 'utf8'));
-if (!config.url.startsWith('https://') || !config.key || config.table !== 'inquiries_web') throw new Error('Invalid existing enquiry configuration');
 console.log(`Built ${pages.length * 2} bilingual pages in dist/. Terms and privacy policy included.`);

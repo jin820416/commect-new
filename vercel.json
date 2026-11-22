@@ -7,9 +7,37 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/service",
+      "destination": "/sourcing",
+      "permanent": true
+    },
+    {
+      "source": "/process",
+      "destination": "/sourcing",
+      "permanent": true
+    },
+    {
+      "source": "/en/service",
+      "destination": "/en/sourcing",
+      "permanent": true
+    },
+    {
+      "source": "/en/process",
+      "destination": "/en/sourcing",
+      "permanent": true
     }
   ]
 }

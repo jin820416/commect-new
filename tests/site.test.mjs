@@ -7,7 +7,7 @@ import { createSiteServer } from '../scripts/serve.mjs';
 import { content } from '../content/site.mjs';
 
 const root = path.resolve('dist');
-const pageNames = ['index', 'about', 'service', 'process', 'contact', 'policy', 'privacy', '404'];
+const pageNames = ['index', 'sourcing', 'market', 'about', 'contact', 'policy', 'privacy', '404'];
 const files = ['ko', 'en'].flatMap(lang => pageNames.map(page => ({ lang, page, file: `${lang === 'en' ? 'en/' : ''}${page}.html` })));
 function hrefFile(href) {
   const url = new URL(href, 'https://www.commect.ai');
@@ -48,20 +48,20 @@ test('clean URLs, legacy query links and retired routes return the expected resu
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(() => { server.closeAllConnections(); server.close(); });
   const base = `http://127.0.0.1:${server.address().port}`;
-  for (const url of ['/', '/about', '/service', '/process', '/contact', '/policy', '/privacy', '/en', '/en/about', '/en/service', '/en/process', '/en/contact', '/en/policy', '/en/privacy']) {
+  for (const url of ['/', '/sourcing', '/market', '/about', '/contact', '/policy', '/privacy', '/en', '/en/sourcing', '/en/market', '/en/about', '/en/contact', '/en/policy', '/en/privacy']) {
     const response = await fetch(base + url);
     assert.equal(response.status, 200, url);
     assert.match(response.headers.get('content-type'), /text\/html/);
   }
-  for (const [from, to] of [['/index.html', '/'], ['/en/index.html', '/en'], ['/en/', '/en'], ['/policy.html?mode=policy', '/policy?mode=policy'], ['/privacy.html?mode=privacy', '/privacy?mode=privacy']]) {
+  for (const [from, to] of [['/index.html', '/'], ['/en/index.html', '/en'], ['/en/', '/en'], ['/policy.html?mode=policy', '/policy?mode=policy'], ['/privacy.html?mode=privacy', '/privacy?mode=privacy'], ['/service', '/sourcing'], ['/process', '/sourcing'], ['/service.html', '/sourcing'], ['/en/service', '/en/sourcing'], ['/en/process', '/en/sourcing']]) {
     const response = await fetch(base + from, { redirect: 'manual' });
-    assert.equal(response.status, 308);
+    assert.equal(response.status, 308, from);
     assert.equal(response.headers.get('location'), to);
   }
-  const illustration = await fetch(base + '/images/pillars/global-network.svg');
-  assert.equal(illustration.status, 200);
-  assert.equal(illustration.headers.get('content-type'), 'image/svg+xml');
-  assert.match(await illustration.text(), /^<svg\b/);
+  const icon = await fetch(base + '/images/favicon.svg');
+  assert.equal(icon.status, 200);
+  assert.equal(icon.headers.get('content-type'), 'image/svg+xml');
+  assert.match(await icon.text(), /<svg\b/);
   for (const url of ['/consignment', '/consignment.html', '/privacy-original.html', '/index-original.html', '/docs/commect-refinement-plan.md', '/content/site.mjs', '/unknown']) {
     const response = await fetch(base + url);
     assert.equal(response.status, 404, url);
@@ -72,7 +72,7 @@ test('clean URLs, legacy query links and retired routes return the expected resu
   assert.match(await en404.text(), /Page not found/);
 });
 
-// Exercise the actual shared form script without transmitting customer or test data.
+// Exercise the actual shared form script without sending anything anywhere.
 async function formHarness(lang, fetchResult = 'success') {
   const script = await readFile(path.join(root, 'assets/site.js'), 'utf8');
   const listeners = {};
@@ -106,7 +106,6 @@ async function formHarness(lang, fetchResult = 'success') {
     FormData: class { get(key) { return fields[key]?.value; } },
     fetch: async (url, options) => {
       calls.push({ url: String(url), options });
-      if (String(url).includes('inquiry-config.json')) return { ok: true, json: async () => ({ url: 'https://example.supabase.co', key: 'public-test-key', table: 'inquiries_web' }) };
       if (fetchResult === 'network') throw new Error('Disconnected');
       if (typeof fetchResult === 'function') return fetchResult();
       return { ok: fetchResult === 'success', status: fetchResult === 'success' ? 201 : 500 };
@@ -117,20 +116,24 @@ async function formHarness(lang, fetchResult = 'success') {
 }
 
 for (const lang of ['ko', 'en']) {
-  test(`${lang}: accepted enquiry uses existing schema, then resets and restores button`, async () => {
+  test(`${lang}: accepted inquiry is posted to /api/inquiry, then resets and restores button`, async () => {
     const h = await formHarness(lang);
     await h.submit();
-    assert.equal(h.calls.length, 2);
-    const request = h.calls[1];
-    assert.equal(request.url, 'https://example.supabase.co/rest/v1/inquiries_web');
-    assert.equal(request.options.headers.Prefer, 'return=minimal');
-    assert.deepEqual(JSON.parse(request.options.body), { name: 'Test Contact', company: 'Test Company', phone: '', email: 'qa@example.invalid', message: 'A test enquiry' });
+    assert.equal(h.calls.length, 1);
+    const request = h.calls[0];
+    assert.equal(request.url, '/api/inquiry');
+    assert.equal(request.options.method, 'POST');
+    const sent = JSON.parse(request.options.body);
+    assert.deepEqual({ name: sent.name, company: sent.company, phone: sent.phone, email: sent.email, message: sent.message, consent: sent.consent },
+      { name: 'Test Contact', company: 'Test Company', phone: '', email: 'qa@example.invalid', message: 'A test enquiry', consent: true });
+    assert.equal(typeof sent.elapsed, 'number');
+    assert.doesNotMatch(request.options.body, /apikey|supabase/i);
     assert.equal(h.resets, 1);
     assert.equal(h.status.textContent, content[lang].contact.success);
     assert.equal(h.button.disabled, false);
     assert.equal(h.buttonLabel.textContent, content[lang].contact.submit);
   });
-  test(`${lang}: rejected or disconnected enquiry preserves entries and permits retry`, async () => {
+  test(`${lang}: rejected or disconnected inquiry preserves entries and permits retry`, async () => {
     for (const mode of ['failure', 'network']) {
       const h = await formHarness(lang, mode);
       await h.submit();
@@ -140,6 +143,12 @@ for (const lang of ['ko', 'en']) {
       assert.equal(h.button.disabled, false);
       assert.equal(h.buttonLabel.textContent, content[lang].contact.submit);
     }
+  });
+  test(`${lang}: a server-side validation refusal shows the check-your-entries message`, async () => {
+    const h = await formHarness(lang, () => ({ ok: false, status: 400 }));
+    await h.submit();
+    assert.equal(h.resets, 0);
+    assert.equal(h.status.textContent, content[lang].contact.invalid);
   });
   test(`${lang}: invalid email, blank company or missing consent never transmits`, async () => {
     for (const [key, value] of [['email', 'bad-email'], ['company', '   '], ['consent', false]]) {
@@ -151,6 +160,17 @@ for (const lang of ['ko', 'en']) {
     }
   });
 }
+
+test('the inquiry type and the mail consent travel as their own fields', async () => {
+  const h = await formHarness('ko');
+  h.fields.kind = { value: '브리핑 수신' };
+  h.fields.consent_mail = { checked: true };
+  await h.submit();
+  const sent = JSON.parse(h.calls[0].options.body);
+  assert.equal(sent.kind, '브리핑 수신');
+  assert.equal(sent.consent_mail, true);
+  assert.equal(sent.message, 'A test enquiry');
+});
 
 test('a second submit while the first is pending does not create a duplicate request', async () => {
   let finish;
