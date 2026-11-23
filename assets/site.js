@@ -140,7 +140,7 @@
     const mailConsent = form.elements.namedItem('consent_mail');
     if (mailConsent) payload.consent_mail = Boolean(mailConsent.checked);
     payload.lang = document.documentElement?.lang === 'en' ? 'en' : 'ko';
-    for (const key of ['name', 'company', 'email']) {
+    for (const key of ['name', 'company', 'email', 'phone']) {
       const input = form.elements.namedItem(key);
       input.setCustomValidity(payload[key] ? '' : messages.invalid);
       input.setAttribute('aria-invalid', String(!input.validity.valid));

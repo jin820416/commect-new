@@ -9,6 +9,7 @@ const pages = ['home', 'sourcing', 'market', 'about', 'contact', 'policy', 'priv
 const navPages = ['sourcing', 'market', 'about', 'contact'];
 const escape = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const lines = value => escape(value).replace(/\n/g, '<br class="desktop-break"> ');
+const breaks = value => escape(value).replace(/\n/g, '<br>');   // line breaks kept on every screen
 const img = file => `/images/${file}`;
 const route = (lang, page = 'home') => `${lang === 'en' ? '/en' : ''}${page === 'home' ? (lang === 'en' ? '' : '/') : '/' + page}`;
 const arrow = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -115,8 +116,8 @@ function form(lang, kind) {
     ? `<fieldset class="kind-field"><legend>${t.kindLabel}<span class="required" aria-hidden="true">*</span></legend><div class="kind-options">${t.kinds.map((k, i) => `<label class="kind-option"><input type="radio" name="kind" value="${escape(k)}"${i ? '' : ' checked'}><span>${escape(k)}</span></label>`).join('')}</div></fieldset>`
     : `<input type="hidden" name="kind" value="${escape(t.kind)}">`;
   const fields = kind === 'contact'
-    ? `${textField(t, prefix, 'company', true)}${textField(t, prefix, 'name', true)}${textField(t, prefix, 'email', true)}${textField(t, prefix, 'phone', false)}<div class="form-field field-full"><label for="${prefix}-message">${t.labels.message}<span class="optional">${t.optional}</span></label><textarea id="${prefix}-message" name="message" rows="6" maxlength="5000"></textarea></div>`
-    : `${textField(t, prefix, 'company', true)}${textField(t, prefix, 'name', true)}<div class="form-field field-full">${textField(t, prefix, 'email', true).slice('<div class="form-field">'.length, -'</div>'.length)}</div>`;
+    ? `${textField(t, prefix, 'company', true)}${textField(t, prefix, 'name', true)}${textField(t, prefix, 'email', true)}${textField(t, prefix, 'phone', true)}<div class="form-field field-full"><label for="${prefix}-message">${t.labels.message}<span class="optional">${t.optional}</span></label><textarea id="${prefix}-message" name="message" rows="6" maxlength="5000"></textarea></div>`
+    : ['company', 'name', 'email', 'phone'].map(key => textField(t, prefix, key, true)).join('');
   const consents = kind === 'contact'
     ? `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div>`
     : `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div><div class="form-consent"><label><input type="checkbox" name="consent_mail" required><span>${t.consentMail}</span></label></div>`;
@@ -139,7 +140,7 @@ function home(lang) {
       <img class="hero-image" src="${img(images.home)}" alt="" fetchpriority="high" decoding="async">
       <div class="hero-shade"></div>
       <div class="container hero-content" data-reveal-group="hero">
-        <div class="hero-copy"><h1 id="page-title" lang="en">${h.title.map((t, i) => `<span data-reveal${i ? ' class="hero-light"' : ''}>${escape(t)}</span>`).join('')}</h1><p class="hero-lead" data-reveal>${escape(h.lead)}</p><p class="hero-text" data-reveal>${lines(h.text)}</p></div>
+        <div class="hero-copy"><h1 id="page-title" lang="en">${h.title.map((t, i) => `<span data-reveal${i ? ' class="hero-light"' : ''}>${escape(t)}</span>`).join('')}</h1><p class="hero-lead" data-reveal>${escape(h.lead)}</p><p class="hero-text" data-reveal>${breaks(h.text)}</p></div>
         <a class="latest-bar" data-reveal href="${route(lang, 'market')}"><span class="latest-label">${escape(h.latest)} ${escape(latest.date)}</span><span class="latest-title" lang="ko">${escape(latest.title)}</span>${arrow}</a>
       </div>
     </section>
@@ -168,7 +169,7 @@ function market(lang) {
   return `${pageHero(images.market, m.title, m.text)}
     <section class="section"><div class="container"><h2 class="section-title" data-reveal>${escape(m.listTitle)}</h2>
       <div class="briefing-table">${briefings.slice(0, 10).map(b => `<article class="briefing-row" data-reveal><p class="briefing-date">${escape(b.date)} (${escape(dayLabel(lang, b.day))})</p><div class="briefing-body" lang="ko"><h3>${escape(b.title)}</h3><p>${escape(b.line)}</p></div></article>`).join('')}</div>
-      ${m.listNote ? `<p class="note">${escape(m.listNote)}</p>` : ''}</div></section>
+      ${m.listNote ? `<p class="note">${escape(m.listNote).replace(/\[(.+?)\]/, '<a href="#subscribe">$1</a>')}</p>` : ''}</div></section>
     <section class="section section-tinted"><div class="container card-grid" data-reveal-group>${card(images.daily, a.daily, m.daily, true)}${card(images.monthly, a.monthly, m.monthly, true)}</div></section>
     <section class="section" id="subscribe"><div class="container form-layout" data-reveal-group>
       <div class="form-intro" data-reveal><h2 class="section-title">${escape(m.subscribeTitle)}</h2><p class="lead">${escape(m.subscribeText)}</p></div>

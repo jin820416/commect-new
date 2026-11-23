@@ -72,8 +72,8 @@ export const content = {
     more: '자세히 보기', contactButton: '문의하기', backHome: '홈으로 돌아가기',
     home: {
       title: ['Green Coffee Sourcing.', 'Market Intelligence.'],
-      lead: '생두 소싱 파트너, 코멕트',
-      text: '신뢰와 전문성을 바탕으로,\n고객의 성공적인 커피 비즈니스를 지원합니다.',
+      lead: '생두 소싱 파트너 — 코멕트',
+      text: '오랜 시간 쌓아온 전문성과 신뢰를 바탕으로\n고객의 성공적인 커피 비즈니스를 지원합니다.',
       latest: '최근 브리핑',
       sourcing: { label: '생두 소싱', title: '생두 소싱의 모든 것', text: '커머셜부터 스페셜티까지,\n고객이 원하는 최적의 생두를 제안합니다.' },
       info: { label: '시장 정보', title: '한 박자 빠른 정보', text: '시장의 흐름을 읽는\n정확하고 신속한 정보를 제공합니다.', button: '브리핑 받아보기' },
@@ -92,7 +92,7 @@ export const content = {
     },
     market: {
       title: '한 박자 빠른 정보', text: '시장의 흐름을 읽는\n정확하고 신속한 정보를 제공합니다.',
-      listTitle: '최근 브리핑', listNote: '',
+      listTitle: '최근 브리핑', listNote: '* 브리핑 전문은 [받아보기를 신청]하신 분께 메일로 보내드립니다.',
       // [title, description, kind]
       daily: ['Coffee Daily', '매일 아침, 가장 먼저 만나는 커피 시장 소식', '일일 시장 브리핑'],
       monthly: ['Monthly Report', '한 달의 흐름을 한눈에 짚는 깊이 있는 분석', '월간 시장 리포트'],
@@ -138,8 +138,8 @@ export const content = {
     more: 'Learn more', contactButton: 'Contact us', backHome: 'Back to home',
     home: {
       title: ['Green Coffee Sourcing.', 'Market Intelligence.'],
-      lead: 'COMMECT, Your Green Coffee Sourcing Partner',
-      text: 'Built on trust and expertise,\nsupporting the success of your coffee business.',
+      lead: 'Your Green Coffee Sourcing Partner\u00a0—\u00a0COMMECT',   // keep the dash with its words when wrapping
+      text: 'Built on years of expertise and trust,\nsupporting the success of your coffee business.',
       latest: 'Latest briefing',
       sourcing: { label: 'Sourcing', title: 'Everything in Green Coffee Sourcing', text: 'From commercial to specialty coffees,\nwe propose the right green coffee for your needs.' },
       info: { label: 'Market Insight', title: 'Insight, One Step Ahead', text: 'Accurate and timely information\nto read the market.', button: 'Receive the briefing' },
@@ -158,7 +158,7 @@ export const content = {
     },
     market: {
       title: 'Insight, One Step Ahead', text: 'Accurate and timely information\nto read the market.',
-      listTitle: 'Latest Briefings', listNote: 'Briefings are published in Korean.',
+      listTitle: 'Latest Briefings', listNote: '* Briefings are published in Korean and sent in full by email to [subscribers].',
       daily: ['Coffee Daily', 'Start every morning with the latest coffee market news.', 'Daily market briefing'],
       monthly: ['Monthly Report', 'An in-depth look at the month\'s market trends.', 'Monthly market report'],
       subscribeTitle: 'Receive the Briefing', subscribeText: 'For industry professionals.',

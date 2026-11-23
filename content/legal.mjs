@@ -50,7 +50,7 @@ export const legal = {
     "privacySections": [
       [
         "수집 항목과 수집 방법",
-        "웹사이트 양식으로 다음 정보를 받습니다. 문의: 문의 유형, 회사명, 담당자명, 이메일(필수), 전화번호와 문의 내용(선택). 브리핑 신청: 회사명, 담당자명, 이메일(필수). 문의 내용에는 주민등록번호, 금융정보, 건강정보 등 민감하거나 불필요한 정보를 입력하지 않도록 유의해 주세요.\n\n회사는 양식으로 받은 정보를 별도의 데이터베이스에 저장하지 않습니다. 양식을 제출하면 그 내용이 회사의 업무용 이메일로 전달됩니다."
+        "웹사이트 양식으로 다음 정보를 받습니다. 문의: 문의 유형, 회사명, 담당자명, 이메일, 전화번호(필수), 문의 내용(선택). 브리핑 신청: 회사명, 담당자명, 이메일, 전화번호(필수). 문의 내용에는 주민등록번호, 금융정보, 건강정보 등 민감하거나 불필요한 정보를 입력하지 않도록 유의해 주세요.\n\n회사는 양식으로 받은 정보를 별도의 데이터베이스에 저장하지 않습니다. 양식을 제출하면 그 내용이 회사의 업무용 이메일로 전달됩니다."
       ],
       [
         "개인정보의 처리 목적",
@@ -143,7 +143,7 @@ export const legal = {
     "privacySections": [
       [
         "Information collected and how",
-        "The website forms collect the following. Inquiries: inquiry type, company, contact name and email address (required), and phone number and message (optional). Briefing sign-ups: company, contact name and email address (required). Please do not include identity numbers, financial or health information, or other sensitive or unnecessary information in your message.\n\nThe Company does not store form submissions in a separate database. When a form is submitted, its content is delivered to the Company’s business email."
+        "The website forms collect the following. Inquiries: inquiry type, company, contact name, email address and phone number (required), and message (optional). Briefing sign-ups: company, contact name, email address and phone number (required). Please do not include identity numbers, financial or health information, or other sensitive or unnecessary information in your message.\n\nThe Company does not store form submissions in a separate database. When a form is submitted, its content is delivered to the Company’s business email."
       ],
       [
         "Purposes",

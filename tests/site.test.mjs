@@ -81,7 +81,7 @@ async function formHarness(lang, fetchResult = 'success') {
   const status = { textContent: '', classList: classes, focus() {} };
   const buttonLabel = { textContent: content[lang].contact.submit };
   const button = { disabled: false, querySelector: () => buttonLabel };
-  const fields = Object.fromEntries(['name', 'company', 'phone', 'email', 'message', 'website', 'consent'].map(k => [k, { value: ({ name: ' Test Contact ', company: ' Test Company ', email: 'qa@example.invalid', message: 'A test enquiry', phone: '' })[k] || '', checked: k === 'consent', custom: '', setCustomValidity(message) { this.custom = message; }, setAttribute() {}, removeAttribute() {}, get validity() { return { valid: !this.custom && (k !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)) }; } }]));
+  const fields = Object.fromEntries(['name', 'company', 'phone', 'email', 'message', 'website', 'consent'].map(k => [k, { value: ({ name: ' Test Contact ', company: ' Test Company ', email: 'qa@example.invalid', message: 'A test enquiry', phone: ' 010-0000-0000 ' })[k] || '', checked: k === 'consent', custom: '', setCustomValidity(message) { this.custom = message; }, setAttribute() {}, removeAttribute() {}, get validity() { return { valid: !this.custom && (k !== 'email' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value)) }; } }]));
   let resets = 0;
   const form = {
     elements: { namedItem: key => fields[key] },
@@ -89,7 +89,7 @@ async function formHarness(lang, fetchResult = 'success') {
     querySelectorAll: () => [],
     addEventListener: (event, fn) => { listeners[event] = fn; },
     setAttribute() {}, removeAttribute() {},
-    checkValidity: () => ['name', 'company', 'email'].every(k => fields[k].validity.valid) && fields.consent.checked,
+    checkValidity: () => ['name', 'company', 'email', 'phone'].every(k => fields[k].validity.valid) && fields.consent.checked,
     reportValidity() {},
     reset() { resets++; Object.values(fields).forEach(f => { f.value = ''; f.checked = false; }); },
   };
@@ -125,7 +125,7 @@ for (const lang of ['ko', 'en']) {
     assert.equal(request.options.method, 'POST');
     const sent = JSON.parse(request.options.body);
     assert.deepEqual({ name: sent.name, company: sent.company, phone: sent.phone, email: sent.email, message: sent.message, consent: sent.consent },
-      { name: 'Test Contact', company: 'Test Company', phone: '', email: 'qa@example.invalid', message: 'A test enquiry', consent: true });
+      { name: 'Test Contact', company: 'Test Company', phone: '010-0000-0000', email: 'qa@example.invalid', message: 'A test enquiry', consent: true });
     assert.equal(typeof sent.elapsed, 'number');
     assert.doesNotMatch(request.options.body, /apikey|supabase/i);
     assert.equal(h.resets, 1);

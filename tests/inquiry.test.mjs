@@ -33,6 +33,7 @@ test('a briefing sign-up needs the mail consent and gets its own subject', async
   assert.equal(withConsent.status, 200);
   assert.equal(sent[0].subject, '[브리핑 신청] Test Company');
   assert.match(sent[0].text, /브리핑 메일 수신 동의: 예/);
+  assert.match(sent[0].text, /전화번호: 010-0000-0000/);
   assert.match(sent[0].text, /페이지: 영문/);
   assert.doesNotMatch(sent[0].text, /문의 내용/);
 });
@@ -40,7 +41,7 @@ test('a briefing sign-up needs the mail consent and gets its own subject', async
 test('required fields, lengths, email, phone, type and consent are checked on the server', () => {
   const cases = [
     [{ company: '' }, 'company'], [{ name: ' ' }, 'name'], [{ email: 'not-an-email' }, 'email'],
-    [{ email: 'a@b.c\r\nBcc: x@y.z' }, 'email'], [{ phone: 'call me' }, 'phone'], [{ kind: 'Spam' }, 'kind'],
+    [{ email: 'a@b.c\r\nBcc: x@y.z' }, 'email'], [{ phone: 'call me' }, 'phone'], [{ phone: ' ' }, 'phone'], [{ kind: 'Spam' }, 'kind'],
     [{ consent: 'yes' }, 'consent'], [{ message: 'x'.repeat(5001) }, 'message'], [{ company: 'x'.repeat(121) }, 'company'],
   ];
   for (const [change, field] of cases) assert.ok(validate(good(change)).errors.includes(field), field);
