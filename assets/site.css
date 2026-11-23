@@ -270,6 +270,7 @@ h1,h2,h3,p,dl,dd,figure { margin:0 }
 .form-consent { display:flex; flex-wrap:wrap; align-items:flex-start; gap:4px 12px; font-size:14px; line-height:1.6 }
 .form-consent label { display:flex; gap:10px; align-items:flex-start; cursor:pointer }
 .form-consent input { width:20px; height:20px; margin:1px 0 0; flex:0 0 auto; accent-color:var(--navy) }
+.form-consent[hidden] { display:none }
 .form-trap { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden }
 .form-status { min-height:1.6em; font-size:14px; color:var(--navy) }
 .form-status:empty { display:none }

@@ -73,7 +73,7 @@ test('clean URLs, legacy query links and retired routes return the expected resu
 });
 
 // Exercise the actual shared form script without sending anything anywhere.
-async function formHarness(lang, fetchResult = 'success') {
+async function formHarness(lang, fetchResult = 'success', extras = {}) {
   const script = await readFile(path.join(root, 'assets/site.js'), 'utf8');
   const listeners = {};
   const calls = [];
@@ -85,7 +85,7 @@ async function formHarness(lang, fetchResult = 'success') {
   let resets = 0;
   const form = {
     elements: { namedItem: key => fields[key] },
-    querySelector: selector => selector === '[role=status]' ? status : button,
+    querySelector: selector => ({ '[role=status]': status, '[data-submit]': button })[selector] ?? extras[selector] ?? null,
     querySelectorAll: () => [],
     addEventListener: (event, fn) => { listeners[event] = fn; },
     setAttribute() {}, removeAttribute() {},
@@ -112,7 +112,7 @@ async function formHarness(lang, fetchResult = 'success') {
     },
   };
   vm.runInNewContext(script, context);
-  return { fields, calls, button, buttonLabel, status, context, get resets() { return resets; }, submit: () => listeners.submit({ preventDefault() {} }) };
+  return { fields, calls, button, buttonLabel, status, context, get resets() { return resets; }, submit: () => listeners.submit({ preventDefault() {} }), change: () => listeners.change() };
 }
 
 for (const lang of ['ko', 'en']) {
@@ -170,6 +170,42 @@ test('the inquiry type and the mail consent travel as their own fields', async (
   assert.equal(sent.kind, '브리핑 수신');
   assert.equal(sent.consent_mail, true);
   assert.equal(sent.message, 'A test enquiry');
+});
+
+test('contact page: the briefing mail consent appears and is required only for the briefing type', async () => {
+  const box = { checked: false, required: true };
+  const block = { hidden: false, querySelector: () => box };
+  let chosen = { hasAttribute: () => false };
+  const h = await formHarness('ko', 'success', { '[data-briefing-consent]': block, get 'input[name=kind]:checked'() { return chosen; } });
+  assert.equal(block.hidden, true);
+  assert.equal(box.required, false);
+  chosen = { hasAttribute: name => name === 'data-briefing' };
+  h.change();
+  assert.equal(block.hidden, false);
+  assert.equal(box.required, true);
+  box.checked = true;
+  chosen = { hasAttribute: () => false };
+  h.change();
+  assert.equal(block.hidden, true);
+  assert.equal(box.checked, false);
+  // After a successful send the form resets to the first type, so the consent hides again.
+  chosen = { hasAttribute: name => name === 'data-briefing' };
+  h.change();
+  const sent = await formHarness('ko', () => { chosen = { hasAttribute: () => false }; return { ok: true, status: 200 }; }, { '[data-briefing-consent]': block, get 'input[name=kind]:checked'() { return chosen; } });
+  chosen = { hasAttribute: name => name === 'data-briefing' };
+  sent.change();
+  assert.equal(block.hidden, false);
+  await sent.submit();
+  assert.equal(block.hidden, true);
+  assert.equal(box.required, false);
+});
+
+test('built contact pages carry the briefing mail consent next to the briefing type', async () => {
+  for (const [file, lang] of [['contact.html', 'ko'], ['en/contact.html', 'en']]) {
+    const page = await readFile(path.join(root, file), 'utf8');
+    assert.match(page, new RegExp(`value="${content[lang].subscribe.kind}" data-briefing`));
+    assert.match(page, /data-briefing-consent hidden><label><input type="checkbox" name="consent_mail">/);
+  }
 });
 
 test('a second submit while the first is pending does not create a duplicate request', async () => {

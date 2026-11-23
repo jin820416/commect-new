@@ -122,6 +122,18 @@
   const label = button.querySelector('span');
   let pending = false;
   const openedAt = Date.now();   // the server ignores forms submitted implausibly fast
+  // Contact page: the briefing mail consent shows (and is required) only for the briefing inquiry type.
+  const briefingConsent = form.querySelector('[data-briefing-consent]');
+  function syncBriefingConsent() {
+    if (!briefingConsent) return;
+    const show = Boolean(form.querySelector('input[name=kind]:checked')?.hasAttribute('data-briefing'));
+    const box = briefingConsent.querySelector('input');
+    briefingConsent.hidden = !show;
+    box.required = show;
+    if (!show) box.checked = false;
+  }
+  form.addEventListener('change', syncBriefingConsent);
+  syncBriefingConsent();
 
   function notify(message, error = false) {
     status.textContent = message;
@@ -169,6 +181,7 @@
       if (response.status === 400) { notify(messages.invalid, true); status.focus({ preventScroll: true }); return; }
       if (!response.ok) throw new Error('Inquiry was not delivered');
       form.reset();
+      syncBriefingConsent();
       form.querySelectorAll('[aria-invalid]').forEach(input => input.removeAttribute('aria-invalid'));
       notify(messages.success);
       status.focus({ preventScroll: true });

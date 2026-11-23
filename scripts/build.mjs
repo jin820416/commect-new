@@ -113,13 +113,13 @@ function form(lang, kind) {
   const t = content[lang][kind];
   const prefix = kind === 'contact' ? 'inquiry' : 'subscribe';
   const kindField = kind === 'contact'
-    ? `<fieldset class="kind-field"><legend>${t.kindLabel}<span class="required" aria-hidden="true">*</span></legend><div class="kind-options">${t.kinds.map((k, i) => `<label class="kind-option"><input type="radio" name="kind" value="${escape(k)}"${i ? '' : ' checked'}><span>${escape(k)}</span></label>`).join('')}</div></fieldset>`
+    ? `<fieldset class="kind-field"><legend>${t.kindLabel}<span class="required" aria-hidden="true">*</span></legend><div class="kind-options">${t.kinds.map((k, i) => `<label class="kind-option"><input type="radio" name="kind" value="${escape(k)}"${k === content[lang].subscribe.kind ? ' data-briefing' : ''}${i ? '' : ' checked'}><span>${escape(k)}</span></label>`).join('')}</div></fieldset>`
     : `<input type="hidden" name="kind" value="${escape(t.kind)}">`;
   const fields = kind === 'contact'
     ? `${textField(t, prefix, 'company', true)}${textField(t, prefix, 'name', true)}${textField(t, prefix, 'email', true)}${textField(t, prefix, 'phone', true)}<div class="form-field field-full"><label for="${prefix}-message">${t.labels.message}<span class="optional">${t.optional}</span></label><textarea id="${prefix}-message" name="message" rows="6" maxlength="5000"></textarea></div>`
     : ['company', 'name', 'email', 'phone'].map(key => textField(t, prefix, key, true)).join('');
   const consents = kind === 'contact'
-    ? `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div>`
+    ? `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div><div class="form-consent" data-briefing-consent hidden><label><input type="checkbox" name="consent_mail"><span>${content[lang].subscribe.consentMail}</span></label></div>`
     : `<div class="form-consent"><label><input type="checkbox" name="consent" required><span>${t.consent}</span></label><a href="${route(lang, 'privacy')}#collection">${t.privacyLink}</a></div><div class="form-consent"><label><input type="checkbox" name="consent_mail" required><span>${t.consentMail}</span></label></div>`;
   return `<form class="inquiry-form form-panel" data-inquiry-form novalidate>
     ${kindField}<div class="form-grid">${fields}</div>
