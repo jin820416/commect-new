@@ -150,6 +150,13 @@ for (const lang of ['ko', 'en']) {
     assert.equal(h.resets, 0);
     assert.equal(h.status.textContent, content[lang].contact.invalid);
   });
+  test(`${lang}: a rate-limit refusal says to wait instead of a generic failure`, async () => {
+    const h = await formHarness(lang, () => ({ ok: false, status: 429 }));
+    await h.submit();
+    assert.equal(h.resets, 0);
+    assert.equal(h.status.textContent, content[lang].contact.busy);
+    assert.equal(h.button.disabled, false);
+  });
   test(`${lang}: invalid email, blank company or missing consent never transmits`, async () => {
     for (const [key, value] of [['email', 'bad-email'], ['company', '   '], ['consent', false]]) {
       const h = await formHarness(lang);

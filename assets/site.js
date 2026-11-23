@@ -179,6 +179,7 @@
         body: JSON.stringify(payload), signal: controller.signal,
       });
       if (response.status === 400) { notify(messages.invalid, true); status.focus({ preventScroll: true }); return; }
+      if (response.status === 429) { notify(messages.busy, true); status.focus({ preventScroll: true }); return; }
       if (!response.ok) throw new Error('Inquiry was not delivered');
       form.reset();
       syncBriefingConsent();

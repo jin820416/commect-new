@@ -79,6 +79,20 @@ test('repeated submissions from one address are slowed down', async () => {
   assert.deepEqual(statuses, [200, 200, 200, 200, 200, 429, 429]);
 });
 
+test('only accepted submissions count toward the limit, and a refused one does not extend it', async () => {
+  const sent = [];
+  const t0 = new Date('2026-11-23T04:00:00Z');
+  const at = minutes => new Date(t0.getTime() + minutes * 60 * 1000);
+  const ip = '203.0.113.10';
+  for (let i = 0; i < 3; i++) assert.equal((await handleInquiry(good({ email: 'bad' }), deps(sent, { ip, now: t0 }))).status, 400);
+  const statuses = [];
+  for (let i = 0; i < 6; i++) statuses.push((await handleInquiry(good(), deps(sent, { ip, now: at(i) }))).status);
+  assert.deepEqual(statuses, [200, 200, 200, 200, 200, 429]);
+  assert.equal((await handleInquiry(good(), deps(sent, { ip, now: at(9) }))).status, 429);
+  assert.equal((await handleInquiry(good(), deps(sent, { ip, now: at(10.1) }))).status, 200);
+  assert.equal(sent.length, 6);
+});
+
 test('the local preview answers /api/inquiry without emailing anyone', async t => {
   const sent = [];
   const server = createSiteServer({ sendInquiry: async mail => { sent.push(mail); } });
