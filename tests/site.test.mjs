@@ -4,7 +4,7 @@ import { readFile, access } from 'node:fs/promises';
 import path from 'node:path';
 import vm from 'node:vm';
 import { createSiteServer } from '../scripts/serve.mjs';
-import { content } from '../content/site.mjs';
+import { content, briefings, briefingCounts } from '../content/site.mjs';
 
 const root = path.resolve('dist');
 const pageNames = ['index', 'sourcing', 'market', 'about', 'contact', 'policy', 'privacy', '404'];
@@ -225,4 +225,20 @@ test('a second submit while the first is pending does not create a duplicate req
   finish({ ok: true });
   await first;
   assert.equal(h.resets, 1);
+});
+
+test('the market page and the home bar list only the newest briefings', async () => {
+  const titles = html => [...html.matchAll(/<h3>([^<]*)<\/h3>|<span class="briefing-title" lang="ko">([^<]*)<\/span>/g)].map(m => m[1] ?? m[2]);
+  const expect = n => briefings.slice(0, n).map(b => b.title.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])));
+  for (const prefix of ['', 'en/']) {
+    const market = await readFile(path.join(root, `${prefix}market.html`), 'utf8');
+    const rows = market.match(/<article class="briefing-row"[\s\S]*?<\/article>/g) || [];
+    assert.equal(rows.length, Math.min(briefingCounts.market, briefings.length), `${prefix}market.html: row count`);
+    assert.deepEqual(rows.map(r => titles(r)[0]), expect(briefingCounts.market), `${prefix}market.html: newest first`);
+    assert.match(market, new RegExp(`<p class="note">\\* (?:최근 ${briefingCounts.market}개 브리핑|Showing the latest ${briefingCounts.market} briefings)`), `${prefix}market.html: the note says how many are shown`);
+    assert.doesNotMatch(market, /\{n\}/, `${prefix}market.html: no unfilled count`);
+    const home = await readFile(path.join(root, `${prefix}index.html`), 'utf8');
+    const items = home.match(/<a class="briefing-item"[\s\S]*?<\/a>/g) || [];
+    assert.deepEqual(items.map(i => titles(i)[0]), expect(briefingCounts.home), `${prefix}index.html: home bar`);
+  }
 });

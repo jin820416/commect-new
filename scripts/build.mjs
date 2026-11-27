@@ -1,7 +1,7 @@
 import { mkdir, writeFile, cp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { content, company, images, briefings } from '../content/site.mjs';
+import { content, company, images, briefings, briefingCounts } from '../content/site.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, 'dist');
@@ -100,7 +100,7 @@ function contactBand(lang) {
 }
 
 function briefingList(lang) {
-  return `<div class="briefing-list">${briefings.slice(0, 3).map(b => `<a class="briefing-item" href="${route(lang, 'market')}"><span class="briefing-date">${escape(b.date)}</span><span class="briefing-title" lang="ko">${escape(b.title)}</span></a>`).join('')}</div>`;
+  return `<div class="briefing-list">${briefings.slice(0, briefingCounts.home).map(b => `<a class="briefing-item" href="${route(lang, 'market')}"><span class="briefing-date">${escape(b.date)}</span><span class="briefing-title" lang="ko">${escape(b.title)}</span></a>`).join('')}</div>`;
 }
 
 function textField(t, prefix, key, required) {
@@ -168,8 +168,8 @@ function market(lang) {
   const a = alts[lang];
   return `${pageHero(images.market, m.title, m.text)}
     <section class="section"><div class="container"><h2 class="section-title" data-reveal>${escape(m.listTitle)}</h2>
-      <div class="briefing-table">${briefings.slice(0, 10).map(b => `<article class="briefing-row" data-reveal><p class="briefing-date">${escape(b.date)} (${escape(dayLabel(lang, b.day))})</p><div class="briefing-body" lang="ko"><h3>${escape(b.title)}</h3><p>${escape(b.line)}</p></div></article>`).join('')}</div>
-      ${m.listNote ? `<p class="note">${escape(m.listNote).replace(/\[(.+?)\]/, '<a href="#subscribe">$1</a>')}</p>` : ''}</div></section>
+      <div class="briefing-table">${briefings.slice(0, briefingCounts.market).map(b => `<article class="briefing-row" data-reveal><p class="briefing-date">${escape(b.date)} (${escape(dayLabel(lang, b.day))})</p><div class="briefing-body" lang="ko"><h3>${escape(b.title)}</h3><p>${escape(b.line)}</p></div></article>`).join('')}</div>
+      ${m.listNote ? `<p class="note">${escape(m.listNote).replace('{n}', briefingCounts.market).replace(/\[(.+?)\]/, '<a href="#subscribe">$1</a>')}</p>` : ''}</div></section>
     <section class="section section-tinted"><div class="container card-grid" data-reveal-group>${card(images.daily, a.daily, m.daily, true)}${card(images.monthly, a.monthly, m.monthly, true)}</div></section>
     <section class="section" id="subscribe"><div class="container form-layout" data-reveal-group>
       <div class="form-intro" data-reveal><h2 class="section-title">${escape(m.subscribeTitle)}</h2><p class="lead">${escape(m.subscribeText)}</p></div>

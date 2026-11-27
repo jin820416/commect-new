@@ -37,6 +37,9 @@ export const images = {
 // (no price figures). Updated automatically after each customer send (coffee-ontology tools/site/publish_briefing.py).
 // Korean only; the English pages show the same list marked as Korean.
 export const briefings = JSON.parse(readFileSync(new URL('./briefings.json', import.meta.url), 'utf8'));
+// How many of them each list shows: the home page bar and the market page (owner's choice 2026-11-27: market 5).
+// Older ones stay in briefings.json but are not shown anywhere on the site.
+export const briefingCounts = { home: 3, market: 5 };
 
 const formTexts = {
   ko: {
@@ -94,7 +97,7 @@ export const content = {
     },
     market: {
       title: '한 박자 빠른 정보', text: '시장의 흐름을 읽는\n정확하고 신속한 정보를 제공합니다.',
-      listTitle: '최근 브리핑', listNote: '* 브리핑 전문은 [받아보기를 신청]하신 분께 메일로 보내드립니다.',
+      listTitle: '최근 브리핑', listNote: '* 최근 {n}개 브리핑의 제목과 요약입니다. 전문은 [받아보기를 신청]하신 분께 메일로 보내드립니다.',
       // [title, description, kind]
       daily: ['Coffee Daily', '매일 아침, 가장 먼저 만나는 커피 시장 소식', '일일 시장 브리핑'],
       monthly: ['Monthly Report', '한 달의 흐름을 한눈에 짚는 깊이 있는 분석', '월간 시장 리포트'],
@@ -160,7 +163,7 @@ export const content = {
     },
     market: {
       title: 'Insight, One Step Ahead', text: 'Accurate and timely information\nto read the market.',
-      listTitle: 'Latest Briefings', listNote: '* Briefings are published in Korean and sent in full by email to [subscribers].',
+      listTitle: 'Latest Briefings', listNote: '* Showing the latest {n} briefings. Briefings are published in Korean and sent in full by email to [subscribers].',
       daily: ['Coffee Daily', 'Start every morning with the latest coffee market news.', 'Daily market briefing'],
       monthly: ['Monthly Report', 'An in-depth look at the month\'s market trends.', 'Monthly market report'],
       subscribeTitle: 'Receive the Briefing', subscribeText: 'For industry professionals.',

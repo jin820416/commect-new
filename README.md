@@ -12,7 +12,7 @@
 
 | 파일 | 역할 |
 |---|---|
-| `content/site.mjs` | 국문·영문 원고, 회사 정보, 이미지, 브리핑 목록 |
+| `content/site.mjs` | 국문·영문 원고, 회사 정보, 이미지, 브리핑 목록과 보이는 개수(`briefingCounts`: 홈 3개, 시장 정보 5개. 옛 브리핑은 `briefings.json`에 남지만 사이트에는 안 보임) |
 | `content/legal.mjs` | 이용약관·개인정보처리방침 본문 |
 | `scripts/build.mjs` | 공통 헤더·푸터·페이지 템플릿, 언어별 HTML 생성 |
 | `assets/site.css` | 공통 디자인과 반응형 규칙 |
